@@ -14,18 +14,15 @@ def main():
     argh
     """
     cwd = os.getcwd()
-    print cwd
     entries = os.listdir(cwd)
 
     entry_list = []
     for entry in entries:
         entry_path = os.path.join(cwd, entry)
-        print entry_path
         digest = hashlib.sha224(entry_path).hexdigest()
         string = "%s %s" % (entry, digest)
-        print string
         entry_list.append(string)
-    file_editor(','.join(entry_list))
+    file_editor('\n'.join(entry_list))
 
 if __name__ == "__main__":
     main()
