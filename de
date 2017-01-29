@@ -1,22 +1,31 @@
 #!/usr/bin/env python
+
+"""
+argh
+"""
+
 import os
 import hashlib
-
-cwd = os.getcwd()
-print cwd
-entries = os.listdir(cwd)
-
-entry_list = []
-for entry in entries:
-    path = os.path.join(cwd, entry)
-    print path
-    digest = hashlib.sha224(entry_path).hexdigest()
-    string = "%s %s" % (entry, digest)
-    print string
-    entry_list.append(string)
+from python_edit import file_editor
 
 
-# import pdb; pdb.set_trace()
+def main():
+    """
+    argh
+    """
+    cwd = os.getcwd()
+    print cwd
+    entries = os.listdir(cwd)
 
+    entry_list = []
+    for entry in entries:
+        entry_path = os.path.join(cwd, entry)
+        print entry_path
+        digest = hashlib.sha224(entry_path).hexdigest()
+        string = "%s %s" % (entry, digest)
+        print string
+        entry_list.append(string)
+    file_editor(','.join(entry_list))
 
-
+if __name__ == "__main__":
+    main()
