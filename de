@@ -20,9 +20,11 @@ def main():
     for entry in entries:
         entry_path = os.path.join(cwd, entry)
         digest = hashlib.sha224(entry_path).hexdigest()
-        string = "%s %s" % (entry, digest)
+        string = "%s %s" % (entry, digest[0:7])
         entry_list.append(string)
-    file_editor('\n'.join(entry_list))
+    output = file_editor('\n'.join(entry_list))
+    print output
 
 if __name__ == "__main__":
     main()
+
