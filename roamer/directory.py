@@ -1,5 +1,7 @@
-import os
-import hashlib
+"""
+argh
+"""
+from roamer.entry import RoamerEntry
 
 class RoamerDirectory(object):
     """
@@ -9,21 +11,17 @@ class RoamerDirectory(object):
         self.directory = directory
         self.searched_entries = []
         self.entries = {}
-        self.digests = {}
-        for entry in raw_entries:
-            entry_path = os.path.join(self.directory, entry)
-            full_digest = hashlib.sha224(entry_path).hexdigest()
-            digest = full_digest[0:7]
-            # if digest in self.digests:
-                # raise Exception('Duplicate hash digest')
-            self.digests[digest] = full_digest
-            self.entries[digest] = entry
+        for raw_entry in raw_entries:
+            entry = RoamerEntry(raw_entry, self)
+            self.entries[entry.digest] = entry
+
+    def __str__(self):
+        return self.directory
 
     def text(self):
         content = []
-        for digest, entry in self.entries.iteritems():
-            string = "%s | %s" % (entry, digest)
-            content.append(string)
+        for entry in self.entries.itervalues():
+            content.append(str(entry))
         return '\n'.join(content)
 
     def search(self, digest):
