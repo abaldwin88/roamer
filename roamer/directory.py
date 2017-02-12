@@ -1,9 +1,9 @@
 """
 argh
 """
-from roamer.entry import RoamerEntry
+from roamer.entry import Entry
 
-class RoamerDirectory(object):
+class Directory(object):
     """
     argh
     """
@@ -12,7 +12,7 @@ class RoamerDirectory(object):
         self.searched_entries = []
         self.entries = {}
         for raw_entry in raw_entries:
-            entry = RoamerEntry(raw_entry, self)
+            entry = Entry(raw_entry, self)
             self.entries[entry.digest] = entry
 
     def __str__(self):
