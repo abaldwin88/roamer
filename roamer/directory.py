@@ -1,7 +1,7 @@
 import os
 import hashlib
 
-class EntryCollection(object):
+class RoamerDirectory(object):
     """
     argh
     """

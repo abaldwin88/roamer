@@ -6,7 +6,7 @@ argh
 
 import os
 from roamer.python_edit import file_editor
-from roamer.directory import EntryCollection
+from roamer.directory import RoamerDirectory
 
 
 def main():
@@ -15,9 +15,9 @@ def main():
     """
     cwd = os.getcwd()
     raw_entries = os.listdir(cwd)
-    entry_collection = EntryCollection(cwd, raw_entries)
-    output = file_editor(entry_collection.text())
-    entry_collection.process_edit(output)
+    roamer_directory = RoamerDirectory(cwd, raw_entries)
+    output = file_editor(roamer_directory.text())
+    roamer_directory.process_edit(output)
     print output
 
 if __name__ == "__main__":
