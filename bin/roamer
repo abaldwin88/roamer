@@ -17,7 +17,6 @@ def main():
     raw_entries = os.listdir(cwd)
     directory = Directory(cwd, raw_entries)
     output = file_editor(directory.text())
-    directory.process_edit(output)
     print output
 
 if __name__ == "__main__":
