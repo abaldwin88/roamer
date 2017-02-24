@@ -17,6 +17,9 @@ class EditDirectory(object):
             entry = Entry(name, self, digest)
             self.entries[digest] = entry
 
+    def find(self, digest):
+        return self.entries.get(digest)
+
 
 def process_line(line):
     columns = line.split('|')

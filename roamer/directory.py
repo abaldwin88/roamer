@@ -23,6 +23,5 @@ class Directory(object):
             content.append(str(entry))
         return '\n'.join(content)
 
-    def search(self, digest):
-        return self.entries[digest]
-
+    def find(self, digest):
+        return self.entries.get(digest)
