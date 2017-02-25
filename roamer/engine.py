@@ -7,15 +7,15 @@ class Engine(object):
         for digest, original_entry in original_dir.entries.iteritems():
             new_entry = edit_dir.find(digest)
             if new_entry is None:
-                self.commands.append('rm %s' % original_entry.name)
+                self.commands.append('rm %s' % original_entry.path)
             elif new_entry.name == original_entry.name:
                 pass
             else:
-                self.commands.append('mv %s %s' % (original_entry.name, new_entry.name))
+                self.commands.append('mv %s %s' % (original_entry.path, new_entry.path))
 
         for digest, entry in edit_dir.entries.iteritems():
             if digest is None:
-                self.commands.append('touch %s' % entry.name)
+                self.commands.append('touch %s' % entry.path)
 
         unknown_digets = set(edit_dir.entries.keys()) - set(original_dir.entries.keys())
 
