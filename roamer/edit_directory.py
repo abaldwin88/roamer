@@ -29,7 +29,8 @@ def process_line(line):
 
     if len(columns) == 1:
         digest = None
-    digest = columns[1].replace(' ', '')
-    if digest == '':
-        digest = None
+    else:
+        digest = columns[1].replace(' ', '')
+        if digest == '':
+            digest = None
     return name, digest

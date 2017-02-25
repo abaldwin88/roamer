@@ -11,19 +11,20 @@ class Engine(object):
             elif new_entry.name == original_entry.name:
                 pass
             else:
-                self.commands.append('mv %s %s' % original_entry.name, new_entry.name)
+                self.commands.append('mv %s %s' % (original_entry.name, new_entry.name))
 
         for digest, entry in edit_dir.entries.iteritems():
             if digest is None:
-                self.commands.append('touch %s %s' % entry.name)
+                self.commands.append('touch %s' % entry.name)
 
         unknown_digets = set(edit_dir.entries.keys()) - set(original_dir.entries.keys())
 
         for digest in unknown_digets:
-            raise Exception('digest %s not found' % digest)
+            if digest is not None:
+                raise Exception('digest %s not found' % digest)
 
     def print_commands(self):
-        return ','.join(self.commands)
+        return '\n'.join(self.commands)
 
 
 
