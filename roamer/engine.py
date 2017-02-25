@@ -1,30 +1,39 @@
-def process_edit(self, content):
-    return
-# for line in content.splitlines():
-            # column = line.split('|')
-            # if len(column) == 1:
-                # return # new file
-            # digest = column[1].replace(' ', '')
-            # name = column
-            # if digest == '':
-                # return # new file
-            # if name[-1] == ' ':
-                # name = name[:-1]
+"""
+argh
+"""
+class Engine(object):
+    def __init__(self, original_dir, edit_dir):
+        self.commands = []
+        for digest, original_entry in original_dir.entries.iteritems():
+            new_entry = edit_dir.find(digest)
+            if new_entry is None:
+                self.commands.append('rm %s' % original_entry.name)
+            elif new_entry.name == original_entry.name:
+                pass
+            else:
+                self.commands.append('mv %s %s' % original_entry.name, new_entry.name)
+
+        for digest, entry in edit_dir.entries.iteritems():
+            if digest is None:
+                self.commands.append('touch %s %s' % entry.name)
+
+        unknown_digets = set(edit_dir.entries.keys()) - set(original_dir.entries.keys())
+
+        for digest in unknown_digets:
+            raise Exception('digest %s not found' % digest)
+
+    def print_commands(self):
+        return ','.join(self.commands)
 
 
-            # if digest in self.entries:
-                # entry = self.search(digest)
-                # if entry == name:
-                    # return # dont do anything
-                # else:
-                    # return # mv file
 
-            # raise Exception('Hash not found')
 
-        # missing_entries = list(set(self.searched_entries) - set(self.entries.keys))
 
-        # for entry in missing_entries:
-            # pass # delete entry
+            # original --> compare to new
+            # digets found same name = nothing
+            # digest found new name = mv
+            # empty digest = new
+            # digest missing... rm
 
 
             # """

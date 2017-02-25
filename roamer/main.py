@@ -21,7 +21,7 @@ def main():
     output = file_editor(directory.text())
     edit_directory = EditDirectory(cwd, output)
     diff_engine = Engine(directory, edit_directory)
-    print diff_engine.commands
+    print diff_engine.print_commands()
 
 if __name__ == "__main__":
     main()
