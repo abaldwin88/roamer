@@ -11,7 +11,7 @@ class Engine(object):
             elif new_entry.name == original_entry.name:
                 pass
             else:
-                self.commands.append('mv %s %s' % (original_entry.path, new_entry.path))
+                self.commands.append('cp %s %s' % (original_entry.path, new_entry.path))
 
         for digest, entry in edit_dir.entries.iteritems():
             if digest is None:
@@ -24,7 +24,8 @@ class Engine(object):
                 raise Exception('digest %s not found' % digest)
 
     def print_commands(self):
-        return '\n'.join(self.commands)
+        # sort so that cp comes first.  Need to copy before removals happen
+        return '\n'.join(self.commands.sort())
 
 
 
