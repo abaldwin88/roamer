@@ -1,6 +1,8 @@
 """
 argh
 """
+import os
+
 class Engine(object):
     def __init__(self, original_dir, edit_dir):
         self.commands = []
@@ -27,6 +29,8 @@ class Engine(object):
         # sort so that cp comes first.  Need to copy before removals happen
         return '\n'.join(self.commands.sort())
 
+    def run_commands(self):
+        os.system(self.commands.sort())
 
 
 
