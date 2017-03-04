@@ -2,6 +2,7 @@
 argh
 """
 import os
+from roamer.command import Command
 
 class Engine(object):
     def __init__(self, original_dir, edit_dir, record):
@@ -10,15 +11,15 @@ class Engine(object):
             new_entry = edit_dir.find(digest)
             if new_entry is None:
                 # TODO: move to trash dir and add to record
-                self.commands.append('rm %s' % original_entry.path)
+                self.commands.append(Command('rm', original_entry))
             elif new_entry.name == original_entry.name:
                 pass
             else:
-                self.commands.append('cp %s %s' % (original_entry.path, new_entry.path))
+                self.commands.append(Command('cp', original_entry, new_entry))
 
         for digest, entry in edit_dir.entries.iteritems():
             if digest is None:
-                self.commands.append('touch %s' % entry.path)
+                self.commands.append(Command('touch', entry))
 
         unknown_digets = set(edit_dir.entries.keys()) - set(original_dir.entries.keys())
 
@@ -31,11 +32,12 @@ class Engine(object):
         # sort so that cp comes first.  Need to copy before removals happen
         if self.commands == []:
             return ''
-        return '\n'.join(self.commands.sort())
+        cmds = [str(cmd) for cmd in self.commands]
+        return '\n'.join(cmds.sort())
 
     def run_commands(self):
         raise
-        os.system(self.commands.sort())
+        os.system(self.print_commands())
 
 
 
