@@ -4,11 +4,12 @@ argh
 import os
 
 class Engine(object):
-    def __init__(self, original_dir, edit_dir):
+    def __init__(self, original_dir, edit_dir, record):
         self.commands = []
         for digest, original_entry in original_dir.entries.iteritems():
             new_entry = edit_dir.find(digest)
             if new_entry is None:
+                # TODO: move to trash dir and add to record
                 self.commands.append('rm %s' % original_entry.path)
             elif new_entry.name == original_entry.name:
                 pass
@@ -22,14 +23,18 @@ class Engine(object):
         unknown_digets = set(edit_dir.entries.keys()) - set(original_dir.entries.keys())
 
         for digest in unknown_digets:
+            # TODO: search record directory and trash
             if digest is not None:
                 raise Exception('digest %s not found' % digest)
 
     def print_commands(self):
         # sort so that cp comes first.  Need to copy before removals happen
+        if self.commands == []:
+            return ''
         return '\n'.join(self.commands.sort())
 
     def run_commands(self):
+        raise
         os.system(self.commands.sort())
 
 
