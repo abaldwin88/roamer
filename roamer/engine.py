@@ -1,21 +1,26 @@
 """
 argh
 """
-import os
 from roamer.command import Command
 
 class Engine(object):
     def __init__(self, original_dir, edit_dir, record):
         self.commands = []
+        copied_entries = []
         for digest, original_entry in original_dir.entries.iteritems():
-            new_entry = edit_dir.find(digest)
-            if new_entry is None:
+            new_entries = edit_dir.find(digest)
+            if new_entries is None:
                 # TODO: move to trash dir and add to record
                 self.commands.append(Command('rm', original_entry))
-            elif new_entry.name == original_entry.name:
-                pass
-            else:
-                self.commands.append(Command('cp', original_entry, new_entry))
+                continue
+            found_original = False
+            for new_entry in new_entries:
+                if new_entry.name == original_entry.name:
+                    found_original = True
+                else:
+                    self.commands.append(Command('cp', original_entry, new_entry))
+            if not found_original:
+                self.commands.append(Command('rm', original_entry))
 
         for digest, entry in edit_dir.entries.iteritems():
             if digest is None:
@@ -33,6 +38,7 @@ class Engine(object):
         if self.commands == []:
             return ''
         cmds = [str(cmd) for cmd in self.commands]
+        # Commands being in alphabetical order just happen to be the order we want to execute
         return '\n'.join(sorted(cmds))
 
     def run_commands(self):

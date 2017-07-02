@@ -15,7 +15,10 @@ class EditDirectory(object):
         for line in content.splitlines():
             name, digest = process_line(line)
             entry = Entry(name, path, digest)
-            self.entries[digest] = entry
+            if digest in self.entries:
+                self.entries[digest].append(entry)
+            else:
+                self.entries[digest] = [entry]
 
     def find(self, digest):
         return self.entries.get(digest)

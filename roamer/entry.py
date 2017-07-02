@@ -21,3 +21,6 @@ class Entry(object):
 
     def __str__(self):
         return "%s | %s" % (self.name, self.digest)
+
+    def persisted(self):
+        os.path.exists(self.path)
