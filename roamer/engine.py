@@ -22,8 +22,9 @@ class Engine(object):
             if not found_original:
                 self.commands.append(Command('roamer-trash', original_entry))
 
-        for digest, entry in edit_dir.entries.iteritems():
-            if digest is None:
+        add_blank_entries = edit_dir.find(None)
+        if add_blank_entries:
+            for entry in add_blank_entries:
                 self.commands.append(Command('touch', entry))
 
         unknown_digets = set(edit_dir.entries.keys()) - set(original_dir.entries.keys())

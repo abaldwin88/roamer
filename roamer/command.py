@@ -14,8 +14,8 @@ class Command(object):
             raise ValueError('Invalid command')
         if first_entry.__class__ != Entry:
             raise TypeError('first_entry not of type Entry')
-        if second_entry.__class__ != Entry:
-            raise TypeError('second_entry not of type Entry')
+        if second_entry.__class__ != Entry and second_entry != None:
+            raise TypeError('second_entry not of type Entry or None')
         self.cmd = cmd
         self.first_entry = first_entry
         self.second_entry = second_entry
