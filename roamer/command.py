@@ -14,6 +14,8 @@ class Command(object):
         self.first_entry = first_entry
         self.second_entry = second_entry
         # TODO: Modify switches based on whether entry is a directory
+        # file name ends in / then is dir
+        # """
         self.options = None
 
 

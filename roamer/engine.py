@@ -34,34 +34,10 @@ class Engine(object):
                 raise Exception('digest %s not found' % digest)
 
     def print_commands(self):
-        # sort so that cp comes first.  Need to copy before removals happen
-        if self.commands == []:
-            return ''
         cmds = [str(cmd) for cmd in self.commands]
-        # Commands being in alphabetical order just happen to be the order we want to execute
+        # sort so that cp comes first.  Need to copy before removals happen
         return '\n'.join(sorted(cmds))
 
     def run_commands(self):
         raise
         return [cmd.execute for cmd in self.commands]
-
-
-
-
-            # original --> compare to new
-            # digets found same name = nothing
-            # digest found new name = mv
-            # empty digest = new
-            # digest missing... rm
-
-
-            # """
-            # digest not searched for = rm
-            # find digest but name doesnt match  = copy from digest location to file(mv)
-            # find digest and name match = do nothing
-            # empty digest = touch new_file
-            # not find digest = error
-            # #####################
-
-            # file name ends in / then is dir
-            # """
