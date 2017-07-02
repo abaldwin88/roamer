@@ -1,6 +1,7 @@
 """
 argh
 """
+import os
 
 class Command(object):
     def __init__(self, cmd, first_entry, second_entry=None):
@@ -19,3 +20,12 @@ class Command(object):
             second_path = self.second_entry.path
         parts = filter(None, (self.cmd, self.options, self.first_entry.path, second_path))
         return ' '.join(parts)
+
+    def execute(self):
+        if self.cmd == 'rm':
+            self.cmd = 'mv'
+            self.second_entry = Entry(first_entry.name, TRASH_DIR, first_entry.digest)
+            record.add_trash(first_entry.digest, second_entry.path)
+
+        print str(self)
+        os.system(str(self))

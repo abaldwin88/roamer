@@ -33,11 +33,11 @@ class Engine(object):
         if self.commands == []:
             return ''
         cmds = [str(cmd) for cmd in self.commands]
-        return '\n'.join(cmds.sort())
+        return '\n'.join(sorted(cmds))
 
     def run_commands(self):
         raise
-        os.system(self.print_commands())
+        return [cmd.execute for cmd in self.commands]
 
 
 

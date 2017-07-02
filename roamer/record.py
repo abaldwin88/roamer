@@ -34,7 +34,7 @@ class Record(object):
             json.dump(entries, outfile)
 
     @staticmethod
-    def add_trash(path, digest):
+    def add_trash(digest, path):
         pass
         # TODO: add trash
 
