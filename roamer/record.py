@@ -4,14 +4,12 @@ argh
 import os
 import json
 from roamer.entry import Entry
-
-entries_path = os.path.expanduser('~/.roamer-data/entries.json')
-trash_path = os.path.expanduser('~/.roamer-data/trash.json')
+from roamer.constant import ENTRIES_JSON_PATH, TRASH_JSON_PATH
 
 class Record(object):
     def __init__(self):
-        self.entries = self._load(entries_path)
-        self.trash_entries = self._load(trash_path)
+        self.entries = self._load(ENTRIES_JSON_PATH)
+        self.trash_entries = self._load(TRASH_JSON_PATH)
 
     @staticmethod
     def _load(path):
@@ -27,7 +25,7 @@ class Record(object):
     @staticmethod
     def add_dir(directory):
         # TODO: Create parent dirs if they don't exist
-        with open(entries_path, 'w') as outfile:
+        with open(ENTRIES_JSON_PATH, 'w') as outfile:
             entries = {}
             for digest, entry in directory.entries.iteritems():
                 entries[entry.digest] = {'name': entry.name, 'directory': entry.directory.path}

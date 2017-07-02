@@ -11,7 +11,7 @@ class Engine(object):
             new_entries = edit_dir.find(digest)
             if new_entries is None:
                 # TODO: move to trash dir and add to record
-                self.commands.append(Command('rm', original_entry))
+                self.commands.append(Command('roamer-trash', original_entry))
                 continue
             found_original = False
             for new_entry in new_entries:
@@ -20,7 +20,7 @@ class Engine(object):
                 else:
                     self.commands.append(Command('cp', original_entry, new_entry))
             if not found_original:
-                self.commands.append(Command('rm', original_entry))
+                self.commands.append(Command('roamer-trash', original_entry))
 
         for digest, entry in edit_dir.entries.iteritems():
             if digest is None:

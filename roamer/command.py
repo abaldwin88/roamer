@@ -2,10 +2,13 @@
 argh
 """
 import os
+from roamer.entry import Entry
+from roamer.record import Record
+from roamer.constant import TRASH_DIR
 
 class Command(object):
     def __init__(self, cmd, first_entry, second_entry=None):
-        if cmd not in ('cp', 'rm', 'mv', 'touch'):
+        if cmd not in ('cp', 'roamer-trash', 'mv', 'touch'):
             raise 'Invalid command'
         self.cmd = cmd
         self.first_entry = first_entry
@@ -22,10 +25,12 @@ class Command(object):
         return ' '.join(parts)
 
     def execute(self):
-        if self.cmd == 'rm':
-            self.cmd = 'mv'
-            self.second_entry = Entry(first_entry.name, TRASH_DIR, first_entry.digest)
-            record.add_trash(first_entry.digest, second_entry.path)
-
         print str(self)
+
+        # TODO: Extract roamer-trash into a direct command
+        if self.cmd == 'roamer-trash':
+            self.cmd = 'mv'
+            self.second_entry = Entry(self.first_entry.name, TRASH_DIR, self.first_entry.digest)
+            Record.add_trash(self.first_entry.digest, self.second_entry.path)
+
         os.system(str(self))
