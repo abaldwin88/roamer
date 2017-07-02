@@ -34,10 +34,9 @@ class Engine(object):
                 raise Exception('digest %s not found' % digest)
 
     def print_commands(self):
-        cmds = [str(cmd) for cmd in self.commands]
+        string_commands = [str(command) for command in sorted(self.commands)]
         # sort so that cp comes first.  Need to copy before removals happen
-        return '\n'.join(sorted(cmds))
+        return '\n'.join(string_commands)
 
     def run_commands(self):
-        raise
-        return [cmd.execute for cmd in self.commands]
+        return [command.execute() for command in sorted(self.commands)]

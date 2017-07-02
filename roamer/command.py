@@ -6,10 +6,16 @@ from roamer.entry import Entry
 from roamer.record import Record
 from roamer.constant import TRASH_DIR
 
+COMMAND_ORDER = {'touch': 1, 'cp': 2, 'roamer-trash': 3}
+
 class Command(object):
     def __init__(self, cmd, first_entry, second_entry=None):
-        if cmd not in ('cp', 'roamer-trash', 'mv', 'touch'):
-            raise 'Invalid command'
+        if cmd not in ('cp', 'roamer-trash', 'touch'):
+            raise ValueError('Invalid command')
+        if first_entry.__class__ != Entry:
+            raise TypeError('first_entry not of type Entry')
+        if second_entry.__class__ != Entry:
+            raise TypeError('second_entry not of type Entry')
         self.cmd = cmd
         self.first_entry = first_entry
         self.second_entry = second_entry
@@ -25,6 +31,12 @@ class Command(object):
             second_path = self.second_entry.path
         parts = filter(None, (self.cmd, self.options, self.first_entry.path, second_path))
         return ' '.join(parts)
+
+    def __lt__(self, other):
+        return self.order_int() < other.order_int()
+
+    def order_int(self):
+        return COMMAND_ORDER[self.cmd]
 
     def execute(self):
         print str(self)
