@@ -41,10 +41,9 @@ class Command(object):
         return COMMAND_ORDER[self.cmd]
 
     def execute(self):
-        # TODO: Extract roamer-trash into a direct command
         if self.cmd == 'roamer-trash':
             self.cmd = 'mv'
             self.second_entry = Entry(self.first_entry.name, TRASH_DIR, self.first_entry.digest)
-            Record.add_trash(self.first_entry.digest, self.second_entry.path)
+            Record().add_trash(self.first_entry.digest, self.second_entry.name)
 
         os.system(str(self))

@@ -4,7 +4,7 @@ argh
 import os
 import json
 from roamer.entry import Entry
-from roamer.constant import ENTRIES_JSON_PATH, TRASH_JSON_PATH
+from roamer.constant import ENTRIES_JSON_PATH, TRASH_JSON_PATH, TRASH_DIR
 
 class Record(object):
     def __init__(self):
@@ -22,17 +22,14 @@ class Record(object):
                 dictionary[entry.digest] = entry
         return dictionary
 
-    @staticmethod
-    def add_dir(directory):
-        # TODO: Create parent dirs if they don't exist
+    def add_dir(self, directory):
         with open(ENTRIES_JSON_PATH, 'w') as outfile:
             entries = {}
-            for digest, entry in directory.entries.iteritems():
+            for entry in directory.entries.values():
                 entries[entry.digest] = {'name': entry.name, 'directory': entry.directory.path}
             json.dump(entries, outfile)
 
-    @staticmethod
-    def add_trash(digest, path):
-        pass
-        # TODO: add trash
-
+    def add_trash(self, digest, name):
+        self.trash_entries[digest] = {'name': name, 'directory': TRASH_DIR}
+        with open(TRASH_JSON_PATH, 'w') as outfile:
+            json.dump(self.trash_entries, outfile)
