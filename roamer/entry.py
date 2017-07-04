@@ -10,9 +10,11 @@ class Entry(object):
     argh
     """
     def __init__(self, name, directory, digest=None):
-        self.name = name
         self.directory = directory
         self.path = os.path.join(str(directory), name)
+        self.name = name
+        if os.path.isdir(self.path) and name[-1] != '/':
+            self.name = name + '/'
         if digest:
             self.digest = digest
         else:
@@ -21,6 +23,9 @@ class Entry(object):
 
     def __str__(self):
         return "%s | %s" % (self.name, self.digest)
+
+    def is_dir(self):
+        return self.name[-1] == '/'
 
     def persisted(self):
         os.path.exists(self.path)

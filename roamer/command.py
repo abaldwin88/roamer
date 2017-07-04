@@ -19,10 +19,12 @@ class Command(object):
         self.cmd = cmd
         self.first_entry = first_entry
         self.second_entry = second_entry
-        # TODO: Modify switches based on whether entry is a directory
-        # file name ends in / then is dir
-        # """
         self.options = None
+        if self.first_entry.is_dir():
+            if not self.first_entry.is_dir():
+                raise ValueError('Directories and Files cannot be interchanged')
+            if cmd == 'cp':
+                self.options = '-R'
 
 
     def __str__(self):
