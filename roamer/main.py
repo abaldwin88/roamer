@@ -27,9 +27,9 @@ def main():
     output = file_editor(directory.text())
     record = Record()
     edit_directory = EditDirectory(cwd, output)
-    diff_engine = Engine(directory, edit_directory, record)
-    print diff_engine.print_commands()
-    diff_engine.run_commands()
+    engine = Engine(directory, edit_directory, record)
+    print engine.print_commands()
+    engine.run_commands()
     record.add_dir(directory)
 
 if __name__ == "__main__":
