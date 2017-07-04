@@ -25,12 +25,11 @@ def main():
 
     directory = Directory(cwd, raw_entries)
     output = file_editor(directory.text())
-    record = Record()
     edit_directory = EditDirectory(cwd, output)
-    engine = Engine(directory, edit_directory, record)
+    engine = Engine(directory, edit_directory)
     print engine.print_commands()
     engine.run_commands()
-    record.add_dir(directory)
+    Record().add_dir(directory)
 
 if __name__ == "__main__":
     main()

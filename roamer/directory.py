@@ -17,6 +17,14 @@ class Directory(object):
     def __str__(self):
         return self.path
 
+    def __eq__(self, other):
+        if other is None:
+            return False
+        return self.path == other.path
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     def text(self):
         content = []
         for entry in self.entries.itervalues():

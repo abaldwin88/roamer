@@ -2,15 +2,15 @@
 argh
 """
 from roamer.command import Command
+from roamer.record import Record
+from roamer.entry import Entry
 
 class Engine(object):
-    def __init__(self, original_dir, edit_dir, record):
+    def __init__(self, original_dir, edit_dir):
         self.commands = []
-        copied_entries = []
         for digest, original_entry in original_dir.entries.iteritems():
             new_entries = edit_dir.find(digest)
             if new_entries is None:
-                # TODO: move to trash dir and add to record
                 self.commands.append(Command('roamer-trash', original_entry))
                 continue
             found_original = False
@@ -29,10 +29,13 @@ class Engine(object):
 
         unknown_digets = set(edit_dir.entries.keys()) - set(original_dir.entries.keys())
 
-        for digest in unknown_digets:
-            # TODO: search record directory and trash
-            if digest is not None:
+        for digest in filter(None, unknown_digets):
+            record = Record(original_dir)
+            outside_entry = record.entries.get(digest) or record.trash_entries.get(digest)
+            if outside_entry is None:
                 raise Exception('digest %s not found' % digest)
+            new_entry = Entry(outside_entry.name, original_dir)
+            self.commands.append(Command('cp', outside_entry, new_entry))
 
     def print_commands(self):
         string_commands = [str(command) for command in sorted(self.commands)]
