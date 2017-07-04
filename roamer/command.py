@@ -39,8 +39,6 @@ class Command(object):
         return COMMAND_ORDER[self.cmd]
 
     def execute(self):
-        print str(self)
-
         # TODO: Extract roamer-trash into a direct command
         if self.cmd == 'roamer-trash':
             self.cmd = 'mv'

@@ -10,12 +10,16 @@ from roamer.directory import Directory
 from roamer.edit_directory import EditDirectory
 from roamer.engine import Engine
 from roamer.record import Record
+from roamer.constant import TRASH_DIR
 
 
 def main():
     """
     argh
     """
+    if not os.path.exists(TRASH_DIR):
+        os.makedirs(TRASH_DIR)
+
     cwd = os.getcwd()
     raw_entries = os.listdir(cwd)
 
@@ -25,6 +29,7 @@ def main():
     edit_directory = EditDirectory(cwd, output)
     diff_engine = Engine(directory, edit_directory, record)
     print diff_engine.print_commands()
+    diff_engine.run_commands()
     record.add_dir(directory)
 
 if __name__ == "__main__":
