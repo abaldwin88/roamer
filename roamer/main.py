@@ -24,6 +24,7 @@ def main():
     raw_entries = os.listdir(cwd)
 
     directory = Directory(cwd, raw_entries)
+    Record().add_dir(directory)
     output = file_editor(directory.text())
     edit_directory = EditDirectory(cwd, output)
     engine = Engine(directory, edit_directory)
