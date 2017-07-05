@@ -21,9 +21,12 @@ class Command(object):
         self.second_entry = second_entry
         self.options = None
         if self.first_entry.is_dir():
-            if not self.first_entry.is_dir():
-                raise ValueError('Directories and Files cannot be interchanged')
-            if cmd == 'cp':
+            if cmd == 'touch':
+                self.cmd = 'mkdir'
+            elif not self.second_entry.is_dir():
+                raise ValueError('Directories and Files cannot be interchanged.  ' \
+                                 'Trailing slash (/) designates a directory.')
+            elif cmd == 'cp':
                 self.options = '-R'
 
 
