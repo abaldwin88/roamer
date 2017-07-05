@@ -26,6 +26,8 @@ class Record(object):
 
     def add_dir(self, directory):
         entries = {}
+        for entry in self.entries.values():
+            entries[entry.digest] = {'name': entry.name, 'directory': entry.directory.path}
         for entry in directory.entries.values():
             entries[entry.digest] = {'name': entry.name, 'directory': entry.directory.path}
         with open(ENTRIES_JSON_PATH, 'w') as outfile:
