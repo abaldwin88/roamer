@@ -29,7 +29,7 @@ def main():
     engine = Engine(directory, edit_directory)
     print engine.print_commands()
     engine.run_commands()
-    Record().add_dir(directory)
+    Record().add_dir(Directory(cwd, os.listdir(cwd)))
 
 if __name__ == "__main__":
     main()
