@@ -5,4 +5,5 @@ A broken work in process
 
 
 # Tests
-python -m unittest discover tests
+pylint roamer tests
+python -m unittest discover
