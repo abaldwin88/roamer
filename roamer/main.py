@@ -10,15 +10,12 @@ from roamer.directory import Directory
 from roamer.edit_directory import EditDirectory
 from roamer.engine import Engine
 from roamer.record import Record
-from roamer.constant import TRASH_DIR
-
 
 class Main(object):
     def __init__(self, cwd=None):
+        self.cwd = cwd
         if cwd is None:
             self.cwd = os.getcwd()
-        if not os.path.exists(TRASH_DIR):
-            os.makedirs(TRASH_DIR)
         raw_entries = os.listdir(self.cwd)
         self.directory = Directory(self.cwd, raw_entries)
         self.edit_directory = None
