@@ -15,6 +15,8 @@ EGG_FILE = os.path.join(TEST_DIR, 'egg.txt')
 ARGH_FILE = os.path.join(TEST_DIR, 'argh.md')
 RESEARCH_FILE = os.path.join(DOC_DIR, 'research.txt')
 
+# TODO: stub out trash/entry constants
+
 class TestStringMethods(unittest.TestCase):
     def setUp(self):
         if os.path.exists(TEST_DIR):
@@ -80,13 +82,14 @@ class TestStringMethods(unittest.TestCase):
             self.assertEqual(egg2_file.read(), 'egg file content')
 
     def test_copy_directory(self):
-        digest = re.search(r'hello\/\ \|\ (.*)', self.text, re.MULTILINE).group(1)
-        new_line = 'hello2/ | %s' % digest
+        digest = re.search(r'docs\/\ \|\ (.*)', self.text, re.MULTILINE).group(1)
+        new_line = 'docs2/ | %s' % digest
         self.text += '\n%s' % new_line
         self.process()
-        path = os.path.join(TEST_DIR, 'hello2/')
+        path = os.path.join(TEST_DIR, 'docs2/')
         self.assertTrue(os.path.exists(path))
-        raise 'check contents'
+        contents = os.listdir(path)
+        self.assertEqual(contents, ['research.txt'])
 
     def test_rename_file(self):
         self.text = re.sub(r'argh.md', 'blarg.md', self.text)
@@ -100,10 +103,12 @@ class TestStringMethods(unittest.TestCase):
     def test_rename_directory(self):
         self.text = re.sub(r'docs/', 'my-docs/', self.text)
         self.process()
+        # TODO: multiple deletes fails here
         self.assertFalse(os.path.exists(DOC_DIR))
         path = os.path.join(TEST_DIR, 'my-docs/')
         self.assertTrue(os.path.exists(path))
-        raise 'check contents'
+        contents = os.listdir(path)
+        self.assertEqual(contents, ['research.txt'])
 
     def test_rename_file_to_directory(self):
         self.text = re.sub(r'hello\/', 'hello.txt', self.text)
