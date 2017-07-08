@@ -25,6 +25,8 @@ class Command(object):
         if self.first_entry.is_dir():
             if cmd == 'touch':
                 self.cmd = 'mkdir'
+            elif cmd == 'roamer-trash':
+                pass
             elif not self.second_entry.is_dir():
                 raise ValueError('Directories and Files cannot be interchanged.  ' \
                                  'Trailing slash (/) designates a directory.')
