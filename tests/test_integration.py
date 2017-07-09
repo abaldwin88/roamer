@@ -15,8 +15,6 @@ EGG_FILE = os.path.join(TEST_DIR, 'egg.txt')
 ARGH_FILE = os.path.join(TEST_DIR, 'argh.md')
 RESEARCH_FILE = os.path.join(DOC_DIR, 'research.txt')
 
-# TODO: stub out trash/entry constants
-
 class TestStringMethods(unittest.TestCase):
     def setUp(self):
         if os.path.exists(TEST_DIR):
