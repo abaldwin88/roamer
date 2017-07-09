@@ -15,7 +15,7 @@ EGG_FILE = os.path.join(TEST_DIR, 'egg.txt')
 ARGH_FILE = os.path.join(TEST_DIR, 'argh.md')
 RESEARCH_FILE = os.path.join(DOC_DIR, 'research.txt')
 
-class TestStringMethods(unittest.TestCase):
+class TestOperations(unittest.TestCase):
     def setUp(self):
         if os.path.exists(TEST_DIR):
             shutil.rmtree(TEST_DIR)
@@ -116,6 +116,42 @@ class TestStringMethods(unittest.TestCase):
         self.text += '\n    \n    \n '
         self.process()
         self.assertTrue(os.path.exists(ARGH_FILE))
+
+    def test_multiple_simple_operations(self):
+        self.test_create_new_file()
+        self.test_delete_directory()
+        self.test_rename_file()
+        self.test_delete_file()
+
+    def test_copy_file_between_directories(self):
+        digest = re.search(r'egg.txt\ \|\ (.*)', self.text, re.MULTILINE).group(1)
+        self.process()
+        second_session = Main(DOC_DIR)
+        text = second_session.directory.text()
+        new_line = 'egg.txt | %s' % digest
+        text += '\n%s' % new_line
+        second_session.process(text)
+        path = os.path.join(DOC_DIR, 'egg.txt')
+        self.assertTrue(os.path.exists(path))
+        with open(path, 'r') as egg_file:
+            self.assertEqual(egg_file.read(), 'egg file content')
+
+    def test_cut_paste_file_between_directories(self):
+        digest = re.search(r'egg.txt\ \|\ (.*)', self.text, re.MULTILINE).group(1)
+        self.text = re.sub(r'egg.txt.*\n', '', self.text)
+        self.process()
+        second_session = Main(DOC_DIR)
+        text = second_session.directory.text()
+        new_line = 'egg.txt | %s' % digest
+        text += '\n%s' % new_line
+        second_session.process(text)
+        path = os.path.join(DOC_DIR, 'egg.txt')
+        self.assertTrue(os.path.exists(path))
+        with open(path, 'r') as egg_file:
+            self.assertEqual(egg_file.read(), 'egg file content')
+
+    def test_cut_paste_file_same_name(self):
+        pass
 
 if __name__ == '__main__':
     unittest.main()
