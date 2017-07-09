@@ -160,7 +160,26 @@ class TestOperations(unittest.TestCase):
             self.assertEqual(egg_file.read(), 'egg file content')
 
     def test_cut_paste_file_same_name(self):
+        # need to nest files inside dir hash?
         pass
+
+    def test_multiple_file_deletes(self):
+        self.text = re.sub(r'argh.md.*\n', '', self.text)
+        self.process()
+        self.assertFalse(os.path.exists(ARGH_FILE))
+        self.main = Main(TEST_DIR)
+        self.text += '\nargh.md'
+        self.process()
+        self.assertTrue(os.path.exists(ARGH_FILE))
+        self.main = Main(TEST_DIR)
+        self.text = re.sub(r'argh.md.*\n', '', self.text)
+        self.process()
+        self.assertFalse(os.path.exists(ARGH_FILE))
+
+    def test_copy_over_existing_file(self):
+        pass
+        # TODO: cp /Users/abaldwin/Desktop/tmp/test/alex.txt /Users/abaldwin/Desktop/tmp/test/zzzz.txt
+        #       roamer-trash /Users/abaldwin/Desktop/tmp/test/zzzz.txt
 
 if __name__ == '__main__':
     unittest.main()

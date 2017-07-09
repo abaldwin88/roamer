@@ -6,8 +6,6 @@ from roamer.entry import Entry
 from roamer.record import Record
 from roamer.constant import TRASH_DIR
 
-# TODO: cp /Users/abaldwin/Desktop/tmp/test/alex.txt /Users/abaldwin/Desktop/tmp/test/zzzz.txt
-#       roamer-trash /Users/abaldwin/Desktop/tmp/test/zzzz.txt
 COMMAND_ORDER = {'touch': 1, 'cp': 2, 'roamer-trash': 3}
 
 class Command(object):
