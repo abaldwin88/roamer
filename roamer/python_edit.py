@@ -15,7 +15,7 @@ else:
 
 
 def file_editor(content):
-    with tempfile.NamedTemporaryFile(suffix=".tmp") as temp:
+    with tempfile.NamedTemporaryFile(suffix=".roamer") as temp:
         temp.write(content)
         temp.flush()
         if EXTRA_EDITOR_COMMAND:
