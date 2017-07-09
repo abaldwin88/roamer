@@ -14,6 +14,8 @@ class EditDirectory(object):
 
         for line in content.splitlines():
             name, digest = process_line(line)
+            if name is None:
+                continue
             entry = Entry(name, path, digest)
             if digest in self.entries:
                 self.entries[digest].append(entry)
@@ -29,6 +31,8 @@ def process_line(line):
     name = columns[0]
     if name[-1] == ' ':
         name = name[:-1]
+    if name.isspace() or name == '':
+        name = None
 
     if len(columns) == 1:
         digest = None
