@@ -1,12 +1,15 @@
 """
 askldjf
 """
+
 import os
+from os.path import expanduser, dirname, realpath
 import shutil
 import unittest
 import re
 from roamer.main import Main
-from roamer.constant import TEST_DIR
+os.environ["ROAMER_DATA_PATH"] = expanduser(dirname(realpath(__file__)) + '/../tmp/roamer-data/')
+from roamer.constant import TEST_DIR, ROAMER_DATA_PATH, TRASH_DIR # pylint: disable=wrong-import-position
 
 HELLO_DIR = os.path.join(TEST_DIR, 'hello/')
 DOC_DIR = os.path.join(TEST_DIR, 'docs/')
@@ -15,23 +18,29 @@ EGG_FILE = os.path.join(TEST_DIR, 'egg.txt')
 ARGH_FILE = os.path.join(TEST_DIR, 'argh.md')
 RESEARCH_FILE = os.path.join(DOC_DIR, 'research.txt')
 
+def reset_dirs(directories):
+    for directory in directories:
+        if os.path.exists(directory):
+            shutil.rmtree(directory)
+        os.makedirs(directory)
+
+def build_testing_entries():
+    os.makedirs(HELLO_DIR)
+    os.makedirs(DOC_DIR)
+    with open(SPAM_FILE, "w") as text_file:
+        text_file.write('spam file content')
+    with open(EGG_FILE, "w") as text_file:
+        text_file.write('egg file content')
+    with open(ARGH_FILE, "w") as text_file:
+        text_file.write('argh file content')
+    with open(RESEARCH_FILE, "w") as text_file:
+        text_file.write('research file content')
+
+
 class TestOperations(unittest.TestCase):
     def setUp(self):
-        if os.path.exists(TEST_DIR):
-            shutil.rmtree(TEST_DIR)
-        os.makedirs(TEST_DIR)
-
-        os.makedirs(HELLO_DIR)
-        os.makedirs(DOC_DIR)
-        with open(SPAM_FILE, "w") as text_file:
-            text_file.write('spam file content')
-        with open(EGG_FILE, "w") as text_file:
-            text_file.write('egg file content')
-        with open(ARGH_FILE, "w") as text_file:
-            text_file.write('argh file content')
-        with open(RESEARCH_FILE, "w") as text_file:
-            text_file.write('research file content')
-
+        reset_dirs([ROAMER_DATA_PATH, TRASH_DIR, TEST_DIR])
+        build_testing_entries()
         self.main = Main(TEST_DIR)
         self.text = self.main.directory.text()
 
