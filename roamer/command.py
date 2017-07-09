@@ -51,6 +51,8 @@ class Command(object):
         if self.cmd == 'roamer-trash':
             self.cmd = 'mv'
             self.second_entry = Entry(self.first_entry.name, TRASH_DIR, self.first_entry.digest)
+            if self.second_entry.is_dir() and self.second_entry.persisted():
+                os.system('rm -R %s' % self.second_entry.path)
             Record().add_trash(self.first_entry.digest, self.second_entry.name)
 
         os.system(str(self))

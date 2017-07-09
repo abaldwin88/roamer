@@ -28,4 +28,4 @@ class Entry(object):
         return self.name[-1] == '/'
 
     def persisted(self):
-        os.path.exists(self.path)
+        return os.path.exists(self.path)

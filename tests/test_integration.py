@@ -103,7 +103,6 @@ class TestStringMethods(unittest.TestCase):
     def test_rename_directory(self):
         self.text = re.sub(r'docs/', 'my-docs/', self.text)
         self.process()
-        # TODO: multiple deletes fails here
         self.assertFalse(os.path.exists(DOC_DIR))
         path = os.path.join(TEST_DIR, 'my-docs/')
         self.assertTrue(os.path.exists(path))
