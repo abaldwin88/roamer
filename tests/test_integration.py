@@ -160,8 +160,25 @@ class TestOperations(unittest.TestCase):
             self.assertEqual(egg_file.read(), 'egg file content')
 
     def test_cut_paste_file_same_name(self):
-        # need to nest files inside trash directory?
-        pass
+        second_session = Main(DOC_DIR)
+        second_text = second_session.directory.text()
+        digest = re.search(r'research.txt\ \|\ (.*)', second_text, re.MULTILINE).group(1)
+        second_text = re.sub(r'research.txt.md.*\n', '', second_text)
+        second_session.process(second_text)
+
+        self.text += '\nresearch.txt'
+        self.process()
+        self.text = re.sub(r'research.txt.*\n', '', self.text)
+        self.process()
+
+        new_line = 'my_new_research.txt | %s' % digest
+        self.text += '\n%s' % new_line
+        self.process()
+
+        path = os.path.join(TEST_DIR, 'my_new_research.txt')
+        self.assertTrue(os.path.exists(path))
+        with open(path, 'r') as research_file:
+            self.assertEqual(research_file.read(), 'research file content')
 
     def test_multiple_file_deletes(self):
         self.text = re.sub(r'argh.md.*\n', '', self.text)
@@ -177,9 +194,26 @@ class TestOperations(unittest.TestCase):
         self.assertFalse(os.path.exists(ARGH_FILE))
 
     def test_copy_over_existing_file(self):
-        pass
-        # TODO: cp /Users/abaldwin/Desktop/tmp/test/alex.txt /Users/abaldwin/Desktop/tmp/test/zzzz.txt
-        #       roamer-trash /Users/abaldwin/Desktop/tmp/test/zzzz.txt
+        erased_file_digest = re.search(r'spam.txt\ \|\ (.*)', self.text, re.MULTILINE).group(1)
+        self.text = re.sub(r'spam.txt.*\n', '', self.text)
+        digest = re.search(r'egg.txt\ \|\ (.*)', self.text, re.MULTILINE).group(1)
+        new_line = 'spam.txt | %s' % digest
+        self.text += '\n%s' % new_line
+        self.process()
+        path = os.path.join(TEST_DIR, 'spam.txt')
+        self.assertTrue(os.path.exists(path))
+        with open(path, 'r') as spam_file:
+            self.assertEqual(spam_file.read(), 'egg file content')
+
+        second_session = Main(DOC_DIR)
+        text = second_session.directory.text()
+        new_line = 'spam.txt | %s' % erased_file_digest
+        text += '\n%s' % new_line
+        second_session.process(text)
+        path = os.path.join(DOC_DIR, 'spam.txt')
+        self.assertTrue(os.path.exists(path))
+        with open(path, 'r') as spam_file:
+            self.assertEqual(spam_file.read(), 'spam file content')
 
     def test_copy_file_same_name(self):
         digest = re.search(r'egg.txt\ \|\ (.*)', self.text, re.MULTILINE).group(1)
