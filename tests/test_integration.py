@@ -194,7 +194,15 @@ class TestOperations(unittest.TestCase):
                 self.assertEqual(new_file.read(), 'egg file content')
 
     def test_copy_dir_same_name(self):
-        pass
+        digest = re.search(r'docs\/\ \|\ (.*)', self.text, re.MULTILINE).group(1)
+        new_line = 'docs/ | %s' % digest
+        self.text += '\n%s' % new_line
+        self.process()
+        for doc_dir in ['docs/', 'docs_copy_1/']:
+            path = os.path.join(TEST_DIR, doc_dir)
+            self.assertTrue(os.path.exists(path))
+            contents = os.listdir(path)
+            self.assertEqual(contents, ['research.txt'])
 
 if __name__ == '__main__':
     unittest.main()
