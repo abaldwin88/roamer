@@ -27,9 +27,9 @@ class Engine(object):
             for entry in add_blank_entries:
                 self.commands.append(Command('touch', entry))
 
-        unknown_digets = set(edit_dir.entries.keys()) - set(original_dir.entries.keys())
+        unknown_digests = set(edit_dir.entries.keys()) - set(original_dir.entries.keys())
 
-        for digest in filter(None, unknown_digets):
+        for digest in filter(None, unknown_digests):
             record = Record(original_dir)
             outside_entry = record.entries.get(digest) or record.trash_entries.get(digest)
             if outside_entry is None:
