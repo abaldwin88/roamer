@@ -1,5 +1,5 @@
 """
-argh
+Represents a single entry from the operating system.  Either a file or a directory.
 """
 
 import os

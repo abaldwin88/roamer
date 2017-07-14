@@ -1,12 +1,9 @@
 """
-argh
+Represents the original directory before any changes have been made.
 """
 from roamer.entry import Entry
 
 class Directory(object):
-    """
-    argh
-    """
     def __init__(self, path, raw_entries):
         self.path = path
         self.entries = {}

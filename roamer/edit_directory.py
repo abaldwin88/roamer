@@ -1,6 +1,5 @@
-
 """
-argh
+Represents a directory after the user has submitted edits
 """
 from collections import Counter
 from roamer.entry import Entry

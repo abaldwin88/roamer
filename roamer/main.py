@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-argh
+This module is the entry point for the application.
 """
 
 import os

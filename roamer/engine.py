@@ -1,5 +1,6 @@
 """
-argh
+Determines commands to be run in order to update the original directory and match
+the state of the edit directory.
 """
 from roamer.command import Command
 from roamer.record import Record

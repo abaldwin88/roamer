@@ -1,5 +1,5 @@
 """
-argh
+This module handles the temp file creation, processing it's output and hand off to the editor
 """
 
 import tempfile

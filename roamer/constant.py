@@ -1,5 +1,5 @@
 """
-kldj
+App wide constants.
 """
 import os
 from os.path import expanduser, join, dirname, realpath, exists

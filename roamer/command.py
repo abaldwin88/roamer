@@ -1,5 +1,5 @@
 """
-argh
+Represents a single os command
 """
 import os
 from roamer.entry import Entry

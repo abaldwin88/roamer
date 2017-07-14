@@ -1,5 +1,5 @@
 """
-argh
+Saves entries and their digests onto disk so they can be used in later sessions.
 """
 import os
 import json
