@@ -160,7 +160,7 @@ class TestOperations(unittest.TestCase):
             self.assertEqual(egg_file.read(), 'egg file content')
 
     def test_cut_paste_file_same_name(self):
-        # need to nest files inside dir hash?
+        # need to nest files inside trash directory?
         pass
 
     def test_multiple_file_deletes(self):
@@ -180,6 +180,21 @@ class TestOperations(unittest.TestCase):
         pass
         # TODO: cp /Users/abaldwin/Desktop/tmp/test/alex.txt /Users/abaldwin/Desktop/tmp/test/zzzz.txt
         #       roamer-trash /Users/abaldwin/Desktop/tmp/test/zzzz.txt
+
+    def test_copy_file_same_name(self):
+        digest = re.search(r'egg.txt\ \|\ (.*)', self.text, re.MULTILINE).group(1)
+        new_line = 'egg.txt | %s' % digest
+        for _ in range(3):
+            self.text += '\n%s' % new_line
+        self.process()
+        for egg_file in ['egg.txt', 'egg_copy_0.txt', 'egg_copy_1.txt']:
+            path = os.path.join(TEST_DIR, egg_file)
+            self.assertTrue(os.path.exists(path))
+            with open(path, 'r') as new_file:
+                self.assertEqual(new_file.read(), 'egg file content')
+
+    def test_copy_dir_same_name(self):
+        pass
 
 if __name__ == '__main__':
     unittest.main()

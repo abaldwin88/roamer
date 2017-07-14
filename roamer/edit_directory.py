@@ -2,6 +2,7 @@
 """
 argh
 """
+from collections import Counter
 from roamer.entry import Entry
 
 class EditDirectory(object):
@@ -11,16 +12,28 @@ class EditDirectory(object):
     def __init__(self, path, content):
         self.path = path
         self.entries = {}
+        self.process_lines(content)
+        self.handle_duplicate_names()
 
+    def process_lines(self, content):
         for line in content.splitlines():
             name, digest = process_line(line)
             if name is None:
                 continue
-            entry = Entry(name, path, digest)
+            entry = Entry(name, self.path, digest)
             if digest in self.entries:
                 self.entries[digest].append(entry)
             else:
                 self.entries[digest] = [entry]
+
+    def handle_duplicate_names(self):
+        for entries in self.entries.values():
+            entry_names = [entry.name for entry in entries]
+            entry_counts = Counter(entry_names)
+            for entry_name, count in entry_counts.iteritems():
+                for i in range(count - 1):
+                    duplicate_entry = next(entry for entry in entries if entry.name == entry_name)
+                    duplicate_entry.append_to_name('_copy_%s' % i)
 
     def find(self, digest):
         return self.entries.get(digest)
