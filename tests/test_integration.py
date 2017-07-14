@@ -187,7 +187,7 @@ class TestOperations(unittest.TestCase):
         for _ in range(3):
             self.text += '\n%s' % new_line
         self.process()
-        for egg_file in ['egg.txt', 'egg_copy_0.txt', 'egg_copy_1.txt']:
+        for egg_file in ['egg.txt', 'egg_copy_1.txt', 'egg_copy_2.txt', 'egg_copy_3.txt']:
             path = os.path.join(TEST_DIR, egg_file)
             self.assertTrue(os.path.exists(path))
             with open(path, 'r') as new_file:

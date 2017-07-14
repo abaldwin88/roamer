@@ -33,7 +33,7 @@ class EditDirectory(object):
             for entry_name, count in entry_counts.iteritems():
                 for i in range(count - 1):
                     duplicate_entry = next(entry for entry in entries if entry.name == entry_name)
-                    duplicate_entry.append_to_name('_copy_%s' % i)
+                    duplicate_entry.append_to_name('_copy_%s' % str(i + 1))
 
     def find(self, digest):
         return self.entries.get(digest)
