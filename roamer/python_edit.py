@@ -6,7 +6,14 @@ import tempfile
 import os
 from subprocess import call
 
-EDITOR = os.environ.get('EDITOR', 'vim')
+ROAMER_EDITOR = os.environ.get('ROAMER_EDITOR')
+
+if ROAMER_EDITOR:
+    EDITOR = ROAMER_EDITOR
+else:
+    EDITOR = os.environ.get('EDITOR')
+    if not EDITOR:
+        EDITOR = 'vim'
 
 if EDITOR in ['vim', 'nvim']:
     EXTRA_EDITOR_COMMAND = '+set backupcopy=yes'
