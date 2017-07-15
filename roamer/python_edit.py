@@ -15,9 +15,10 @@ else:
     if not EDITOR:
         EDITOR = 'vim'
 
-if EDITOR in ['vim', 'nvim']:
+if EDITOR in ['vim', 'nvim', 'vi']:
     EXTRA_EDITOR_COMMAND = '+set backupcopy=yes'
 else:
+    # nano and emacs work without any extra commands
     EXTRA_EDITOR_COMMAND = None
 
 
