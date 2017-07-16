@@ -5,9 +5,6 @@ from collections import Counter
 from roamer.entry import Entry
 
 class EditDirectory(object):
-    """
-    argh
-    """
     def __init__(self, path, content):
         self.path = path
         self.entries = {}
@@ -41,10 +38,10 @@ class EditDirectory(object):
 def process_line(line):
     columns = line.split('|')
     name = columns[0]
-    if name[-1] == ' ':
-        name = name[:-1]
     if name.isspace() or name == '':
         name = None
+    elif name[-1] == ' ':
+        name = name[:-1]
 
     if len(columns) == 1:
         digest = None
