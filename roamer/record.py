@@ -34,10 +34,10 @@ class Record(object):
         with open(ENTRIES_JSON_PATH, 'w') as outfile:
             json.dump(entries, outfile)
 
-    def add_trash(self, digest, name):
+    def add_trash(self, digest, name, directory):
         entries = {}
         for entry in self.trash_entries.values():
             entries[entry.digest] = {'name': entry.name, 'directory': entry.directory.path}
-        entries[digest] = {'name': name, 'directory': TRASH_DIR}
+        entries[digest] = {'name': name, 'directory': directory}
         with open(TRASH_JSON_PATH, 'w') as outfile:
             json.dump(entries, outfile)
