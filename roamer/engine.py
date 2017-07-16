@@ -35,8 +35,10 @@ class Engine(object):
             outside_entry = record.entries.get(digest) or record.trash_entries.get(digest)
             if outside_entry is None:
                 raise Exception('digest %s not found' % digest)
-            new_entry = Entry(outside_entry.name, original_dir)
-            self.commands.append(Command('cp', outside_entry, new_entry))
+
+            for entry in edit_dir.find(digest):
+                new_entry = Entry(entry.name, original_dir)
+                self.commands.append(Command('cp', outside_entry, new_entry))
 
     def print_commands(self):
         string_commands = [str(command) for command in sorted(self.commands)]
