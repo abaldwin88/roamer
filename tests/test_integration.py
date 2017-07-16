@@ -145,7 +145,7 @@ class TestOperations(unittest.TestCase):
         with open(path, 'r') as egg_file:
             self.assertEqual(egg_file.read(), 'egg file content')
 
-    def test_cut_paste_file_between_directories(self):
+    def test_cut_paste_files_between_directories(self):
         digest = re.search(r'egg.txt\ \|\ (.*)', self.text, re.MULTILINE).group(1)
         self.text = re.sub(r'egg.txt.*\n', '', self.text)
         self.process()
@@ -153,27 +153,40 @@ class TestOperations(unittest.TestCase):
         text = second_session.directory.text()
         new_line = 'egg.txt | %s' % digest
         text += '\n%s' % new_line
+        new_line = 'egg2.txt | %s' % digest
+        text += '\n%s' % new_line
         second_session.process(text)
         path = os.path.join(DOC_DIR, 'egg.txt')
         self.assertTrue(os.path.exists(path))
         with open(path, 'r') as egg_file:
             self.assertEqual(egg_file.read(), 'egg file content')
+        path = os.path.join(DOC_DIR, 'egg2.txt')
+        self.assertTrue(os.path.exists(path))
+        with open(path, 'r') as egg_file:
+            self.assertEqual(egg_file.read(), 'egg file content')
 
     def test_cut_paste_file_same_name(self):
-        second_session = Main(DOC_DIR)
-        second_text = second_session.directory.text()
-        digest = re.search(r'research.txt\ \|\ (.*)', second_text, re.MULTILINE).group(1)
-        second_text = re.sub(r'research.txt.md.*\n', '', second_text)
-        second_session.process(second_text)
+        session = Main(DOC_DIR)
+        session_text = session.directory.text()
+        digest = re.search(r'research.txt\ \|\ (.*)', session_text, re.MULTILINE).group(1)
+        session_text = re.sub(r'research.txt.*$', '', session_text, re.MULTILINE)
+        session.process(session_text)
 
-        self.text += '\nresearch.txt'
-        self.process()
-        self.text = re.sub(r'research.txt.*\n', '', self.text)
-        self.process()
+        session = Main(TEST_DIR)
+        session_text = session.directory.text()
+        session_text += '\nresearch.txt'
+        session.process(session_text)
 
+        session = Main(TEST_DIR)
+        session_text = session.directory.text()
+        session_text = re.sub(r'research.txt.*\n', '', self.text)
+        session.process(session_text)
+
+        session = Main(TEST_DIR)
+        session_text = session.directory.text()
         new_line = 'my_new_research.txt | %s' % digest
-        self.text += '\n%s' % new_line
-        self.process()
+        session_text += '\n%s' % new_line
+        session.process(session_text)
 
         path = os.path.join(TEST_DIR, 'my_new_research.txt')
         self.assertTrue(os.path.exists(path))
