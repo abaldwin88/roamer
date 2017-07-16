@@ -1,13 +1,12 @@
 """
-askldjf
+Integration tests for roamer
 """
 
 import os
 from os.path import expanduser, dirname, realpath
 import shutil
 import unittest
-import re
-from roamer.main import Main
+from tests.session import Session
 os.environ["ROAMER_DATA_PATH"] = expanduser(dirname(realpath(__file__)) + '/../tmp/roamer-data/')
 from roamer.constant import TEST_DIR, ROAMER_DATA_PATH, TRASH_DIR # pylint: disable=wrong-import-position
 
@@ -41,66 +40,60 @@ class TestOperations(unittest.TestCase):
     def setUp(self):
         reset_dirs([ROAMER_DATA_PATH, TRASH_DIR, TEST_DIR])
         build_testing_entries()
-        self.main = Main(TEST_DIR)
-        self.text = self.main.directory.text()
-
-    def process(self):
-        self.main.process(self.text)
+        self.session = Session(TEST_DIR)
 
     def test_directory_text_output(self):
-        self.assertTrue('hello/' in self.text)
-        self.assertTrue('docs/' in self.text)
-        self.assertTrue('spam.txt' in self.text)
-        self.assertTrue('egg.txt' in self.text)
-        self.assertTrue('argh.md' in self.text)
+        self.assertTrue('hello/' in self.session.text)
+        self.assertTrue('docs/' in self.session.text)
+        self.assertTrue('spam.txt' in self.session.text)
+        self.assertTrue('egg.txt' in self.session.text)
+        self.assertTrue('argh.md' in self.session.text)
 
     def test_create_new_file(self):
-        self.text += '\nnew_file.txt'
-        self.process()
+        self.session.add_entry('new_file.txt')
+        self.session.process()
         path = os.path.join(TEST_DIR, 'new_file.txt')
         self.assertTrue(os.path.exists(path))
         self.assertTrue(os.path.isfile(path))
 
     def test_create_new_directory(self):
-        self.text += '\nnew_dir/'
-        self.process()
+        self.session.add_entry('new_dir/')
+        self.session.process()
         path = os.path.join(TEST_DIR, 'new_dir/')
         self.assertTrue(os.path.exists(path))
         self.assertTrue(os.path.isdir(path))
 
     def test_delete_file(self):
-        self.text = re.sub(r'argh.md.*\n', '', self.text)
-        self.process()
+        self.session.remove_entry('argh.md')
+        self.session.process()
         self.assertFalse(os.path.exists(ARGH_FILE))
 
     def test_delete_directory(self):
-        self.text = re.sub(r'hello\/.*\n', '', self.text)
-        self.process()
+        self.session.remove_entry('hello/')
+        self.session.process()
         self.assertFalse(os.path.exists(HELLO_DIR))
 
     def test_copy_file(self):
-        digest = re.search(r'egg.txt\ \|\ (.*)', self.text, re.MULTILINE).group(1)
-        new_line = 'egg2.txt | %s' % digest
-        self.text += '\n%s' % new_line
-        self.process()
+        digest = self.session.get_digest('egg.txt')
+        self.session.add_entry('egg2.txt', digest)
+        self.session.process()
         path = os.path.join(TEST_DIR, 'egg2.txt')
         self.assertTrue(os.path.exists(path))
         with open(path, 'r') as egg2_file:
             self.assertEqual(egg2_file.read(), 'egg file content')
 
     def test_copy_directory(self):
-        digest = re.search(r'docs\/\ \|\ (.*)', self.text, re.MULTILINE).group(1)
-        new_line = 'docs2/ | %s' % digest
-        self.text += '\n%s' % new_line
-        self.process()
+        digest = self.session.get_digest('docs/')
+        self.session.add_entry('docs2/', digest)
+        self.session.process()
         path = os.path.join(TEST_DIR, 'docs2/')
         self.assertTrue(os.path.exists(path))
         contents = os.listdir(path)
         self.assertEqual(contents, ['research.txt'])
 
     def test_rename_file(self):
-        self.text = re.sub(r'argh.md', 'blarg.md', self.text)
-        self.process()
+        self.session.rename('argh.md', 'blarg.md')
+        self.session.process()
         self.assertFalse(os.path.exists(ARGH_FILE))
         path = os.path.join(TEST_DIR, 'blarg.md')
         self.assertTrue(os.path.exists(path))
@@ -108,8 +101,8 @@ class TestOperations(unittest.TestCase):
             self.assertEqual(blarg_file.read(), 'argh file content')
 
     def test_rename_directory(self):
-        self.text = re.sub(r'docs/', 'my-docs/', self.text)
-        self.process()
+        self.session.rename('docs/', 'my-docs/')
+        self.session.process()
         self.assertFalse(os.path.exists(DOC_DIR))
         path = os.path.join(TEST_DIR, 'my-docs/')
         self.assertTrue(os.path.exists(path))
@@ -117,13 +110,13 @@ class TestOperations(unittest.TestCase):
         self.assertEqual(contents, ['research.txt'])
 
     def test_rename_file_to_directory(self):
-        self.text = re.sub(r'hello\/', 'hello.txt', self.text)
+        self.session.rename('hello/', 'hello.txt')
         with self.assertRaises(ValueError):
-            self.process()
+            self.session.process()
 
     def test_empty_lines(self):
-        self.text += '\n    \n    \n '
-        self.process()
+        self.session.text += '\n    \n    \n '
+        self.session.process()
         self.assertTrue(os.path.exists(ARGH_FILE))
 
     def test_multiple_simple_operations(self):
@@ -133,29 +126,24 @@ class TestOperations(unittest.TestCase):
         self.test_delete_file()
 
     def test_copy_file_between_directories(self):
-        digest = re.search(r'egg.txt\ \|\ (.*)', self.text, re.MULTILINE).group(1)
-        self.process()
-        second_session = Main(DOC_DIR)
-        text = second_session.directory.text()
-        new_line = 'egg.txt | %s' % digest
-        text += '\n%s' % new_line
-        second_session.process(text)
+        digest = self.session.get_digest('egg.txt')
+        self.session.process()
+        second_session = Session(DOC_DIR)
+        second_session.add_entry('egg.txt', digest)
+        second_session.process()
         path = os.path.join(DOC_DIR, 'egg.txt')
         self.assertTrue(os.path.exists(path))
         with open(path, 'r') as egg_file:
             self.assertEqual(egg_file.read(), 'egg file content')
 
     def test_cut_paste_files_between_directories(self):
-        digest = re.search(r'egg.txt\ \|\ (.*)', self.text, re.MULTILINE).group(1)
-        self.text = re.sub(r'egg.txt.*\n', '', self.text)
-        self.process()
-        second_session = Main(DOC_DIR)
-        text = second_session.directory.text()
-        new_line = 'egg.txt | %s' % digest
-        text += '\n%s' % new_line
-        new_line = 'egg2.txt | %s' % digest
-        text += '\n%s' % new_line
-        second_session.process(text)
+        digest = self.session.get_digest('egg.txt')
+        self.session.remove_entry('egg.txt')
+        self.session.process()
+        second_session = Session(DOC_DIR)
+        second_session.add_entry('egg.txt', digest)
+        second_session.add_entry('egg2.txt', digest)
+        second_session.process()
         path = os.path.join(DOC_DIR, 'egg.txt')
         self.assertTrue(os.path.exists(path))
         with open(path, 'r') as egg_file:
@@ -166,28 +154,21 @@ class TestOperations(unittest.TestCase):
             self.assertEqual(egg_file.read(), 'egg file content')
 
     def test_cut_paste_file_same_name(self):
-        session = Main(DOC_DIR)
-        session_text = session.directory.text()
-        digest = re.search(r'research.txt\ \|\ (.*)', session_text, re.MULTILINE).group(1)
-        # TODO: \n doesnt work.  Need to replace all of them with the usage below with $
-        session_text = re.sub(r'research.txt.*$', '', session_text, re.MULTILINE)
-        session.process(session_text)
+        doc_session = Session(DOC_DIR)
+        digest = doc_session.get_digest('research.txt')
+        doc_session.remove_entry('research.txt')
+        doc_session.process()
 
-        session = Main(TEST_DIR)
-        session_text = session.directory.text()
-        session_text += '\nresearch.txt'
-        session.process(session_text)
+        self.session.add_entry('research.txt')
+        self.session.process()
 
-        session = Main(TEST_DIR)
-        session_text = session.directory.text()
-        session_text = re.sub(r'research.txt.*\n', '', self.text)
-        session.process(session_text)
+        self.session.reload()
+        self.session.remove_entry('research.txt')
+        self.session.process()
 
-        session = Main(TEST_DIR)
-        session_text = session.directory.text()
-        new_line = 'my_new_research.txt | %s' % digest
-        session_text += '\n%s' % new_line
-        session.process(session_text)
+        self.session.reload()
+        self.session.add_entry('my_new_research.txt', digest)
+        self.session.process()
 
         path = os.path.join(TEST_DIR, 'my_new_research.txt')
         self.assertTrue(os.path.exists(path))
@@ -195,48 +176,43 @@ class TestOperations(unittest.TestCase):
             self.assertEqual(research_file.read(), 'research file content')
 
     def test_multiple_file_deletes(self):
-        self.text = re.sub(r'argh.md.*\n', '', self.text)
-        self.process()
+        self.session.remove_entry('argh.md')
+        self.session.process()
         self.assertFalse(os.path.exists(ARGH_FILE))
-        self.main = Main(TEST_DIR)
-        self.text += '\nargh.md'
-        self.process()
+        second_session = Session(TEST_DIR)
+        second_session.add_entry('argh.md')
+        second_session.process()
         self.assertTrue(os.path.exists(ARGH_FILE))
-        self.main = Main(TEST_DIR)
-        self.text = re.sub(r'argh.md.*\n', '', self.text)
-        self.process()
+        second_session.reload()
+        second_session.remove_entry('argh.md')
+        second_session.process()
         self.assertFalse(os.path.exists(ARGH_FILE))
 
     def test_copy_over_existing_file(self):
         # TODO: fix this
-        return
-        erased_file_digest = re.search(r'spam.txt\ \|\ (.*)', self.text, re.MULTILINE).group(1)
-        self.text = re.sub(r'spam.txt.*\n', '', self.text)
-        digest = re.search(r'egg.txt\ \|\ (.*)', self.text, re.MULTILINE).group(1)
-        new_line = 'spam.txt | %s' % digest
-        self.text += '\n%s' % new_line
-        self.process()
+        erased_spam_digest = self.session.get_digest('spam.txt')
+        egg_digest = self.session.get_digest('egg.txt')
+        self.session.remove_entry('spam.txt')
+        self.session.add_entry('spam.txt', egg_digest)
+        self.session.process()
         path = os.path.join(TEST_DIR, 'spam.txt')
         self.assertTrue(os.path.exists(path))
         with open(path, 'r') as spam_file:
             self.assertEqual(spam_file.read(), 'egg file content')
 
-        second_session = Main(DOC_DIR)
-        text = second_session.directory.text()
-        new_line = 'spam.txt | %s' % erased_file_digest
-        text += '\n%s' % new_line
-        second_session.process(text)
+        second_session = Session(DOC_DIR)
+        second_session.add_entry('spam.txt', erased_spam_digest)
+        second_session.process()
         path = os.path.join(DOC_DIR, 'spam.txt')
         self.assertTrue(os.path.exists(path))
         with open(path, 'r') as spam_file:
             self.assertEqual(spam_file.read(), 'spam file content')
 
     def test_copy_file_same_name(self):
-        digest = re.search(r'egg.txt\ \|\ (.*)', self.text, re.MULTILINE).group(1)
-        new_line = 'egg.txt | %s' % digest
+        digest = self.session.get_digest('egg.txt')
         for _ in range(3):
-            self.text += '\n%s' % new_line
-        self.process()
+            self.session.add_entry('egg.txt', digest)
+        self.session.process()
         for egg_file in ['egg.txt', 'egg_copy_1.txt', 'egg_copy_2.txt', 'egg_copy_3.txt']:
             path = os.path.join(TEST_DIR, egg_file)
             self.assertTrue(os.path.exists(path))
@@ -244,10 +220,9 @@ class TestOperations(unittest.TestCase):
                 self.assertEqual(new_file.read(), 'egg file content')
 
     def test_copy_dir_same_name(self):
-        digest = re.search(r'docs\/\ \|\ (.*)', self.text, re.MULTILINE).group(1)
-        new_line = 'docs/ | %s' % digest
-        self.text += '\n%s' % new_line
-        self.process()
+        digest = self.session.get_digest('docs/')
+        self.session.add_entry('docs/', digest)
+        self.session.process()
         for doc_dir in ['docs/', 'docs_copy_1/']:
             path = os.path.join(TEST_DIR, doc_dir)
             self.assertTrue(os.path.exists(path))
