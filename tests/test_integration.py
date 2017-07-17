@@ -189,7 +189,8 @@ class TestOperations(unittest.TestCase):
         self.assertFalse(os.path.exists(ARGH_FILE))
 
     def test_copy_over_existing_file(self):
-        # TODO: fix this
+        # TODO: mock out sleep
+        import time; time.sleep(2)
         erased_spam_digest = self.session.get_digest('spam.txt')
         egg_digest = self.session.get_digest('egg.txt')
         self.session.remove_entry('spam.txt')

@@ -18,7 +18,11 @@ class Entry(object):
         if digest:
             self.digest = digest
         else:
-            self.full_digest = hashlib.sha224(self.path).hexdigest()
+            if self.persisted():
+                digest_text = self.path + str(os.path.getmtime(self.path))
+            else:
+                digest_text = self.path
+            self.full_digest = hashlib.sha224(digest_text).hexdigest()
             self.digest = self.full_digest[0:7]
 
     def __str__(self):
