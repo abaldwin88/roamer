@@ -12,7 +12,7 @@ class Engine(object):
         for digest, original_entry in original_dir.entries.iteritems():
             new_entries = edit_dir.find(digest)
             if new_entries is None:
-                self.commands.append(Command('roamer-trash', original_entry))
+                self.commands.append(Command('roamer-trash-copy', original_entry))
                 continue
             found_original = False
             for new_entry in new_entries:
@@ -21,7 +21,7 @@ class Engine(object):
                 else:
                     self.commands.append(Command('cp', original_entry, new_entry))
             if not found_original:
-                self.commands.append(Command('roamer-trash', original_entry))
+                self.commands.append(Command('roamer-trash-copy', original_entry))
 
         add_blank_entries = edit_dir.find(None)
         if add_blank_entries:
@@ -39,6 +39,13 @@ class Engine(object):
             for entry in edit_dir.find(digest):
                 new_entry = Entry(entry.name, original_dir)
                 self.commands.append(Command('cp', outside_entry, new_entry))
+
+        trash_entries = [command.first_entry for command in self.commands if command.cmd == 'roamer-trash-copy']
+        copy_over_entires = [ c.second_entry.name for c in self.commands if c.cmd == 'cp' ]
+        for entry in trash_entries:
+            if entry.name in copy_over_entires:
+                continue
+            self.commands.append(Command('rm', entry))
 
     def print_commands(self):
         string_commands = [str(command) for command in sorted(self.commands)]

@@ -6,11 +6,11 @@ from roamer.entry import Entry
 from roamer.record import Record
 from roamer.constant import TRASH_DIR
 
-COMMAND_ORDER = {'touch': 1, 'cp': 2, 'roamer-trash': 3}
+COMMAND_ORDER = {'touch': 1, 'roamer-trash-copy': 2, 'cp': 3, 'rm': 4}
 
 class Command(object):
     def __init__(self, cmd, first_entry, second_entry=None):
-        if cmd not in ('cp', 'roamer-trash', 'touch'):
+        if cmd not in ('touch', 'roamer-trash-copy', 'cp', 'rm'):
             raise ValueError('Invalid command')
         if first_entry.__class__ != Entry:
             raise TypeError('first_entry not of type Entry')
@@ -23,7 +23,9 @@ class Command(object):
         if self.first_entry.is_dir():
             if cmd == 'touch':
                 self.cmd = 'mkdir'
-            elif cmd == 'roamer-trash':
+            elif cmd == 'rm':
+                self.options = '-R'
+            elif cmd == 'roamer-trash-copy':
                 pass
             elif not self.second_entry.is_dir():
                 raise ValueError('Directories and Files cannot be interchanged.  ' \
@@ -46,8 +48,8 @@ class Command(object):
         return COMMAND_ORDER[self.cmd]
 
     def execute(self):
-        if self.cmd == 'roamer-trash':
-            self.cmd = 'mv'
+        if self.cmd == 'roamer-trash-copy':
+            self.cmd = 'cp'
             trash_entry_dir = os.path.join(TRASH_DIR, self.first_entry.digest)
             self.second_entry = Entry(self.first_entry.name, trash_entry_dir,
                                       self.first_entry.digest)
@@ -60,5 +62,4 @@ class Command(object):
                 os.makedirs(trash_entry_dir)
 
             Record().add_trash(self.first_entry.digest, self.second_entry.name, trash_entry_dir)
-
         os.system(str(self))
