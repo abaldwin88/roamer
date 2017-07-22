@@ -1,5 +1,7 @@
 """
-meh
+Represents a single session of roamer.
+Preps the state, gathers records from disk, opens user's file editor
+and passes into the Engine for processing
 """
 import os
 from roamer.python_edit import file_editor
