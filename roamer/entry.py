@@ -48,5 +48,4 @@ class Entry(object):
     def extension(self):
         if self.is_dir():
             return '/'
-        else:
-            return os.path.splitext(self.name)[1]
+        return os.path.splitext(self.name)[1]
