@@ -3,6 +3,8 @@ Represents a single session of roamer.
 Preps the state, gathers records from disk, opens user's file editor
 and passes into the Engine for processing
 """
+
+from __future__ import print_function
 import os
 from roamer.python_edit import file_editor
 from roamer.directory import Directory
@@ -28,6 +30,6 @@ class Session(object):
         self.edit_directory = EditDirectory(self.cwd, output)
         engine = Engine(self.directory, self.edit_directory)
         engine.compile_commands()
-        print engine.print_commands()
+        print(engine.commands_to_str())
         engine.run_commands()
         Record().add_dir(Directory(self.cwd, os.listdir(self.cwd)))

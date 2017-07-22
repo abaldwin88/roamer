@@ -59,7 +59,7 @@ class Engine(object):
             if entry.name not in copy_over_entires:
                 self.commands.append(Command('rm', entry))
 
-    def print_commands(self):
+    def commands_to_str(self):
         string_commands = [str(command) for command in sorted(self.commands)]
         # sort so that cp comes first.  Need to copy before removals happen
         return '\n'.join(string_commands)
