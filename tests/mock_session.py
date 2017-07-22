@@ -1,26 +1,26 @@
 """
 Mocks a roamer session for testing purposes.
-Wraps the main process to avoid actually interacting with a text editor.
+Wraps the session process to avoid actually interacting with a text editor.
 Instead the text output that is normally destined for the users editor is available
 for manipulation inside the tests.
 """
 import re
-from roamer.main import Main
+from roamer.session import Session
 
-class Session(object):
+class MockSession(object):
     def __init__(self, directory):
         self.load(directory)
 
     def load(self, directory):
         self.directory = directory
-        self.main = Main(directory)
-        self.text = self.main.directory.text()
+        self.session = Session(directory)
+        self.text = self.session.directory.text()
 
     def reload(self):
         self.load(self.directory)
 
     def process(self):
-        self.main.process(self.text)
+        self.session.process(self.text)
 
     def add_entry(self, name, digest=None):
         if digest:

@@ -7,7 +7,7 @@ from os.path import expanduser
 import shutil
 import unittest
 import time
-from tests.session import Session
+from tests.mock_session import MockSession
 BASE_ROAMER_PATH = os.environ.get('ROAMER_DATA_PATH') or expanduser('~/.roamer-data/')
 os.environ["ROAMER_DATA_PATH"] = expanduser(os.path.join(BASE_ROAMER_PATH, 'tmp/test/.roamer-data'))
 from roamer.constant import TEST_DIR, ROAMER_DATA_PATH, TRASH_DIR # pylint: disable=wrong-import-position
@@ -42,7 +42,7 @@ class TestOperations(unittest.TestCase):
     def setUp(self):
         reset_dirs([ROAMER_DATA_PATH, TRASH_DIR, TEST_DIR])
         build_testing_entries()
-        self.session = Session(TEST_DIR)
+        self.session = MockSession(TEST_DIR)
 
     def test_directory_text_output(self):
         self.assertTrue('hello/' in self.session.text)
@@ -130,7 +130,7 @@ class TestOperations(unittest.TestCase):
     def test_copy_file_between_directories(self):
         digest = self.session.get_digest('egg.txt')
         self.session.process()
-        second_session = Session(DOC_DIR)
+        second_session = MockSession(DOC_DIR)
         second_session.add_entry('egg.txt', digest)
         second_session.process()
         path = os.path.join(DOC_DIR, 'egg.txt')
@@ -142,7 +142,7 @@ class TestOperations(unittest.TestCase):
         digest = self.session.get_digest('egg.txt')
         self.session.remove_entry('egg.txt')
         self.session.process()
-        second_session = Session(DOC_DIR)
+        second_session = MockSession(DOC_DIR)
         second_session.add_entry('egg.txt', digest)
         second_session.add_entry('egg2.txt', digest)
         second_session.process()
@@ -156,7 +156,7 @@ class TestOperations(unittest.TestCase):
             self.assertEqual(egg_file.read(), 'egg file content')
 
     def test_cut_paste_file_same_name(self):
-        doc_session = Session(DOC_DIR)
+        doc_session = MockSession(DOC_DIR)
         digest = doc_session.get_digest('research.txt')
         doc_session.remove_entry('research.txt')
         doc_session.process()
@@ -181,7 +181,7 @@ class TestOperations(unittest.TestCase):
         self.session.remove_entry('argh.md')
         self.session.process()
         self.assertFalse(os.path.exists(ARGH_FILE))
-        second_session = Session(TEST_DIR)
+        second_session = MockSession(TEST_DIR)
         second_session.add_entry('argh.md')
         second_session.process()
         self.assertTrue(os.path.exists(ARGH_FILE))
@@ -203,7 +203,7 @@ class TestOperations(unittest.TestCase):
         with open(path, 'r') as spam_file:
             self.assertEqual(spam_file.read(), 'egg file content')
 
-        second_session = Session(DOC_DIR)
+        second_session = MockSession(DOC_DIR)
         second_session.add_entry('spam.txt', erased_spam_digest)
         second_session.process()
         path = os.path.join(DOC_DIR, 'spam.txt')
