@@ -5,6 +5,7 @@ This module is the entry point for the application.
 """
 
 import os
+import pkg_resources
 from roamer.python_edit import file_editor
 from roamer.directory import Directory
 from roamer.edit_directory import EditDirectory
@@ -33,5 +34,9 @@ class Main(object):
         engine.run_commands()
         Record().add_dir(Directory(self.cwd, os.listdir(self.cwd)))
 
-def start():
+def start(argv):
+    if '--version' in argv:
+        version = pkg_resources.require('roamer')[0].version
+        print version
+        return
     Main().run()
