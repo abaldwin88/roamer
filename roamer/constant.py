@@ -8,7 +8,7 @@ ROAMER_DATA_PATH = os.environ.get('ROAMER_DATA_PATH') or expanduser('~/.roamer-d
 ENTRIES_JSON_PATH = expanduser(join(ROAMER_DATA_PATH, 'entries.json'))
 TRASH_JSON_PATH = expanduser(join(ROAMER_DATA_PATH, 'trash.json'))
 TRASH_DIR = expanduser(join(ROAMER_DATA_PATH, 'trash/'))
-TEST_DIR = expanduser(dirname(realpath(__file__)) + '/../tmp/test_dir/')
+TEST_DIR = expanduser(join(ROAMER_DATA_PATH, 'tmp/test/mock_dir'))
 
 if not exists(TRASH_DIR):
     os.makedirs(TRASH_DIR)

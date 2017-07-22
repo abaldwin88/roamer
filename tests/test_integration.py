@@ -3,11 +3,12 @@ Integration tests for roamer
 """
 
 import os
-from os.path import expanduser, dirname, realpath
+from os.path import expanduser
 import shutil
 import unittest
 from tests.session import Session
-os.environ["ROAMER_DATA_PATH"] = expanduser(dirname(realpath(__file__)) + '/../tmp/roamer-data/')
+BASE_ROAMER_PATH = os.environ.get('ROAMER_DATA_PATH') or expanduser('~/.roamer-data/')
+os.environ["ROAMER_DATA_PATH"] = expanduser(os.path.join(BASE_ROAMER_PATH, 'tmp/test/.roamer-data'))
 from roamer.constant import TEST_DIR, ROAMER_DATA_PATH, TRASH_DIR # pylint: disable=wrong-import-position
 
 HELLO_DIR = os.path.join(TEST_DIR, 'hello/')
