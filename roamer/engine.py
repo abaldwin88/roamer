@@ -8,9 +8,19 @@ from roamer.entry import Entry
 
 class Engine(object):
     def __init__(self, original_dir, edit_dir):
+        self.original_dir = original_dir
+        self.edit_dir = edit_dir
         self.commands = []
-        for digest, original_entry in original_dir.entries.iteritems():
-            new_entries = edit_dir.find(digest)
+
+    def compile_commands(self):
+        self.compare_dirs()
+        self.new_entries()
+        self.handle_unknown_digests()
+        self.save_copy_over_files_to_trash()
+
+    def compare_dirs(self):
+        for digest, original_entry in self.original_dir.entries.iteritems():
+            new_entries = self.edit_dir.find(digest)
             if new_entries is None:
                 self.commands.append(Command('roamer-trash-copy', original_entry))
                 continue
@@ -23,29 +33,31 @@ class Engine(object):
             if not found_original:
                 self.commands.append(Command('roamer-trash-copy', original_entry))
 
-        add_blank_entries = edit_dir.find(None)
+    def new_entries(self):
+        add_blank_entries = self.edit_dir.find(None)
         if add_blank_entries:
             for entry in add_blank_entries:
                 self.commands.append(Command('touch', entry))
 
-        unknown_digests = set(edit_dir.entries.keys()) - set(original_dir.entries.keys())
+    def handle_unknown_digests(self):
+        unknown_digests = set(self.edit_dir.entries.keys()) - set(self.original_dir.entries.keys())
 
         for digest in filter(None, unknown_digests):
-            record = Record(original_dir)
+            record = Record(self.original_dir)
             outside_entry = record.entries.get(digest) or record.trash_entries.get(digest)
             if outside_entry is None:
                 raise Exception('digest %s not found' % digest)
 
-            for entry in edit_dir.find(digest):
-                new_entry = Entry(entry.name, original_dir)
+            for entry in self.edit_dir.find(digest):
+                new_entry = Entry(entry.name, self.original_dir)
                 self.commands.append(Command('cp', outside_entry, new_entry))
 
+    def save_copy_over_files_to_trash(self):
         trash_entries = [c.first_entry for c in self.commands if c.cmd == 'roamer-trash-copy']
         copy_over_entires = [c.second_entry.name for c in self.commands if c.cmd == 'cp']
         for entry in trash_entries:
-            if entry.name in copy_over_entires:
-                continue
-            self.commands.append(Command('rm', entry))
+            if entry.name not in copy_over_entires:
+                self.commands.append(Command('rm', entry))
 
     def print_commands(self):
         string_commands = [str(command) for command in sorted(self.commands)]

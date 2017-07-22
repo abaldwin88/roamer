@@ -28,6 +28,7 @@ class Main(object):
     def process(self, output):
         self.edit_directory = EditDirectory(self.cwd, output)
         engine = Engine(self.directory, self.edit_directory)
+        engine.compile_commands()
         print engine.print_commands()
         engine.run_commands()
         Record().add_dir(Directory(self.cwd, os.listdir(self.cwd)))
