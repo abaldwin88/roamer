@@ -40,8 +40,8 @@ class Engine(object):
                 new_entry = Entry(entry.name, original_dir)
                 self.commands.append(Command('cp', outside_entry, new_entry))
 
-        trash_entries = [command.first_entry for command in self.commands if command.cmd == 'roamer-trash-copy']
-        copy_over_entires = [ c.second_entry.name for c in self.commands if c.cmd == 'cp' ]
+        trash_entries = [c.first_entry for c in self.commands if c.cmd == 'roamer-trash-copy']
+        copy_over_entires = [c.second_entry.name for c in self.commands if c.cmd == 'cp']
         for entry in trash_entries:
             if entry.name in copy_over_entires:
                 continue

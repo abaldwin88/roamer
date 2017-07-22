@@ -6,6 +6,7 @@ import os
 from os.path import expanduser
 import shutil
 import unittest
+import time
 from tests.session import Session
 BASE_ROAMER_PATH = os.environ.get('ROAMER_DATA_PATH') or expanduser('~/.roamer-data/')
 os.environ["ROAMER_DATA_PATH"] = expanduser(os.path.join(BASE_ROAMER_PATH, 'tmp/test/.roamer-data'))
@@ -190,8 +191,8 @@ class TestOperations(unittest.TestCase):
         self.assertFalse(os.path.exists(ARGH_FILE))
 
     def test_copy_over_existing_file(self):
-        # TODO: mock out sleep
-        import time; time.sleep(2)
+        # TODO: mock out sleep or use version-ed digests
+        time.sleep(2)
         erased_spam_digest = self.session.get_digest('spam.txt')
         egg_digest = self.session.get_digest('egg.txt')
         self.session.remove_entry('spam.txt')

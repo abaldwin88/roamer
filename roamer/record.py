@@ -4,7 +4,7 @@ Saves entries and their digests onto disk so they can be used in later sessions.
 import os
 import json
 from roamer.entry import Entry
-from roamer.constant import ENTRIES_JSON_PATH, TRASH_JSON_PATH, TRASH_DIR
+from roamer.constant import ENTRIES_JSON_PATH, TRASH_JSON_PATH
 from roamer.directory import Directory
 
 class Record(object):
