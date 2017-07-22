@@ -1,3 +1,3 @@
-#!/bin/sh
-
-python ~/.roamer/roamer/main.py
+#!/usr/bin/env python
+from roamer import main
+main.start()

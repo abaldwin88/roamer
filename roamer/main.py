@@ -32,5 +32,5 @@ class Main(object):
         engine.run_commands()
         Record().add_dir(Directory(self.cwd, os.listdir(self.cwd)))
 
-if __name__ == "__main__":
+def start():
     Main().run()
