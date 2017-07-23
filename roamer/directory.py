@@ -24,7 +24,7 @@ class Directory(object):
 
     def text(self):
         content = []
-        for entry in self.entries.itervalues():
+        for entry in self.entries.values():
             content.append(str(entry))
         return '\n'.join(content)
 

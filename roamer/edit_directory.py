@@ -26,7 +26,7 @@ class EditDirectory(object):
         for entries in self.entries.values():
             entry_names = [entry.name for entry in entries]
             entry_counts = Counter(entry_names)
-            for entry_name, count in entry_counts.iteritems():
+            for entry_name, count in entry_counts.items():
                 for i in range(count - 1):
                     duplicate_entry = next(entry for entry in entries if entry.name == entry_name)
                     duplicate_entry.append_to_name('_copy_%s' % str(i + 1))

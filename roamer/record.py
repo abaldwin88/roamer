@@ -18,7 +18,7 @@ class Record(object):
         if os.path.exists(path):
             with open(path) as data_file:
                 data = json.load(data_file)
-            for digest, entry_data in data.iteritems():
+            for digest, entry_data in data.items():
                 entry = Entry(entry_data['name'], Directory(entry_data['directory'], []), digest)
                 if entry.directory != self._filter_directory:
                     dictionary[entry.digest] = entry

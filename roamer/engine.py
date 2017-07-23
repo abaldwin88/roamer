@@ -19,7 +19,7 @@ class Engine(object):
         self.save_copy_over_files_to_trash()
 
     def compare_dirs(self):
-        for digest, original_entry in self.original_dir.entries.iteritems():
+        for digest, original_entry in self.original_dir.entries.items():
             new_entries = self.edit_dir.find(digest)
             if new_entries is None:
                 self.commands.append(Command('roamer-trash-copy', original_entry))

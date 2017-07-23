@@ -22,7 +22,7 @@ class Entry(object):
                 digest_text = self.path + str(os.path.getmtime(self.path))
             else:
                 digest_text = self.path
-            self.full_digest = hashlib.sha224(digest_text).hexdigest()
+            self.full_digest = hashlib.sha224(digest_text.encode('utf-8')).hexdigest()
             self.digest = self.full_digest[0:7]
 
     def __str__(self):
