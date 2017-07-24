@@ -1,5 +1,5 @@
 from distutils.core import setup
-version = '0.0.4'
+version = '0.0.5'
 setup(
   name = 'roamer',
   packages = ['roamer'],
@@ -11,4 +11,5 @@ setup(
   download_url = 'https://github.com/abaldwin88/roamer/archive/v%s.zip' % version,
   keywords = ['explorer', 'plain text', 'directory'], # arbitrary keywords
   classifiers = [],
+  scripts=['bin/roamer'],
 )
