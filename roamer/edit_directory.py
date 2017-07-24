@@ -43,6 +43,10 @@ def process_line(line):
     elif name[-1] == ' ':
         name = name[:-1]
 
+    if name and name[0] == '#':
+        # Hashtags are commented lines
+        name = None
+
     if len(columns) == 1:
         digest = None
     else:
