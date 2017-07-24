@@ -23,7 +23,8 @@ class Directory(object):
         return not self.__eq__(other)
 
     def text(self):
-        content = []
+        pwd_comment = '# pwd: %s' % self.path
+        content = [pwd_comment]
         for entry in self.entries.values():
             content.append(str(entry))
         return '\n'.join(content)
