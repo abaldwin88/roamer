@@ -31,4 +31,4 @@ def file_editor(content):
         else:
             call([EDITOR, temp.name])
         temp.seek(0)
-        return temp.read()
+        return temp.read().decode('UTF-8')
