@@ -6,6 +6,11 @@ Plain Text File Explorer
 A broken work in process
 
 
+# Requirements
+python version: 2.7+, 3.2+
+
+OS: Linux, MacOS, Windows WSL (Windows Subsystem for Linux)
+
 # Tests
 pylint roamer tests
 python -m unittest discover
