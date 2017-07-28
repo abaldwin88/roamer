@@ -13,7 +13,7 @@ class Entry(object):
         self.directory = directory
         self.name = name
         self.set_path()
-        if self.name and self.name[0] == '#':
+        if self.name and self.name[0] == '"':
             raise TypeError('roamer does not like files that start with # ')
         if os.path.isdir(self.path) and name[-1] != '/':
             self.name = name + '/'

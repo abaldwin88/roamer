@@ -113,7 +113,7 @@ class TestOperations(unittest.TestCase):
 
     def test_comment_line(self):
         original_entry_count = len([entry for entry in os.listdir(TEST_DIR)])
-        self.session.add_entry('# Comment Line')
+        self.session.add_entry('" Comment Line')
         self.session.process()
         entry_count = len([entry for entry in os.listdir(TEST_DIR)])
         self.assertEqual(entry_count, original_entry_count)

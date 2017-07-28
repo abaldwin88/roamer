@@ -43,7 +43,7 @@ def process_line(line):
     elif name[-1] == ' ':
         name = name[:-1]
 
-    if name and name[0] == '#':
+    if name and name[0] == '"':
         # Hashtags are commented lines
         name = None
 
