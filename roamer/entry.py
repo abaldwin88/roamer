@@ -50,8 +50,7 @@ class Entry(object):
         extension_length = len(self.extension())
         if extension_length == 0:
             return self.name
-        else:
-            return self.name[:-extension_length]
+        return self.name[:-extension_length]
 
     def extension(self):
         if self.is_dir():
