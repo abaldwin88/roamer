@@ -244,5 +244,15 @@ class TestOperations(unittest.TestCase): #pylint: disable=too-many-public-method
         self.session.process()
         self.assertTrue(os.path.exists(SPAM_FILE))
 
+    def test_unicode_character(self):
+        new_file = 'n\xc3\xa9w_file.txt'
+        self.session.add_entry(new_file)
+        self.session.process()
+        second_session = MockSession(DOC_DIR)
+        second_session.process()
+        path = os.path.join(TEST_DIR, new_file)
+        self.assertTrue(os.path.exists(path))
+        self.assertTrue(os.path.isfile(path))
+
 if __name__ == '__main__':
     unittest.main()

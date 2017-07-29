@@ -3,6 +3,7 @@ Represents a single entry from the operating system.  Either a file or a directo
 """
 
 import os
+import sys
 import hashlib
 
 class Entry(object):
@@ -24,7 +25,9 @@ class Entry(object):
                 digest_text = self.path + str(os.path.getmtime(self.path))
             else:
                 digest_text = self.path
-            self.full_digest = hashlib.sha224(digest_text.encode('utf-8')).hexdigest()
+            if sys.version_info[0] == 3:
+                digest_text = digest_text.encode('utf-8')
+            self.full_digest = hashlib.sha224(digest_text).hexdigest()
             self.digest = self.full_digest[0:7]
 
     def __str__(self):
