@@ -2,6 +2,7 @@
 Represents a single os command
 """
 import os
+import subprocess
 from roamer.entry import Entry
 from roamer.record import Record
 from roamer.constant import TRASH_DIR
@@ -35,14 +36,16 @@ class Command(object):
 
 
     def __str__(self):
-        second_path = None
-        if self.second_entry:
-            second_path = self.second_entry.path
-        parts = filter(None, (self.cmd, self.options, self.first_entry.path, second_path))
-        return ' '.join(parts)
+        return ' '.join(self.to_list())
 
     def __lt__(self, other):
         return self.order_int() < other.order_int()
+
+    def to_list(self):
+        second_path = None
+        if self.second_entry:
+            second_path = self.second_entry.path
+        return filter(None, (self.cmd, self.options, self.first_entry.path, second_path))
 
     def order_int(self):
         return COMMAND_ORDER[self.cmd]
@@ -62,4 +65,4 @@ class Command(object):
                 os.makedirs(trash_entry_dir)
 
             Record().add_trash(self.first_entry.digest, self.second_entry.name, trash_entry_dir)
-        os.system(str(self))
+        subprocess.call(self.to_list(), shell=False)

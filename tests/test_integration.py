@@ -239,5 +239,10 @@ class TestOperations(unittest.TestCase): #pylint: disable=too-many-public-method
             contents = os.listdir(path)
             self.assertEqual(contents, ['research.txt'])
 
+    def test_shell_injection(self):
+        self.session.add_entry('new_file.txt; rm %s' % SPAM_FILE)
+        self.session.process()
+        self.assertTrue(os.path.exists(SPAM_FILE))
+
 if __name__ == '__main__':
     unittest.main()
