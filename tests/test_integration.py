@@ -239,6 +239,18 @@ class TestOperations(unittest.TestCase): #pylint: disable=too-many-public-method
             contents = os.listdir(path)
             self.assertEqual(contents, ['research.txt'])
 
+    def test_copy_file_same_name_no_extension(self):
+        digest = self.session.get_digest('egg.txt')
+        for _ in range(3):
+            self.session.add_entry('egg', digest)
+        self.session.process()
+        for egg_file in ['egg.txt', 'egg', 'egg_copy_1', 'egg_copy_2']:
+            path = os.path.join(TEST_DIR, egg_file)
+            self.assertTrue(os.path.exists(path))
+            with open(path, 'r') as new_file:
+                self.assertEqual(new_file.read(), 'egg file content')
+
+
     def test_shell_injection(self):
         self.session.add_entry('new_file.txt; rm %s' % SPAM_FILE)
         self.session.process()
