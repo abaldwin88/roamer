@@ -38,7 +38,7 @@ def build_testing_entries():
         text_file.write('research file content')
 
 
-class TestOperations(unittest.TestCase):
+class TestOperations(unittest.TestCase): #pylint: disable=too-many-public-methods
     def setUp(self):
         reset_dirs([ROAMER_DATA_PATH, TRASH_DIR, TEST_DIR])
         build_testing_entries()
