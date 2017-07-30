@@ -111,6 +111,15 @@ class TestOperations(unittest.TestCase): #pylint: disable=too-many-public-method
         contents = os.listdir(path)
         self.assertEqual(contents, ['research.txt'])
 
+    def disabled_clear_persisted_file_contents(self):
+        self.session.remove_entry('argh.md')
+        self.session.add_entry('argh.md')
+        self.session.process()
+        path = ARGH_FILE
+        self.assertFalse(os.path.exists(path))
+        with open(path, 'r') as argh_file:
+            self.assertEqual(argh_file.read(), 'argh file content')
+
     def test_comment_line(self):
         original_entry_count = len([entry for entry in os.listdir(TEST_DIR)])
         self.session.add_entry('" Comment Line')
