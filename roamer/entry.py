@@ -28,7 +28,7 @@ class Entry(object):
             if sys.version_info[0] == 3:
                 digest_text = digest_text.encode('utf-8')
             self.full_digest = hashlib.sha224(digest_text).hexdigest()
-            self.digest = self.full_digest[0:7]
+            self.digest = self.full_digest[0:12]
 
     def __str__(self):
         return "%s | %s" % (self.name, self.digest)
