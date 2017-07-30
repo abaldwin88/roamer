@@ -58,9 +58,9 @@ class Command(object):
                                       self.first_entry.digest)
             if  self.second_entry.persisted():
                 if self.second_entry.is_dir():
-                    os.system('rm -R %s' % self.second_entry.path)
+                    subprocess.call(['rm', '-R', self.second_entry.path])
                 else:
-                    os.system('rm %s' % self.second_entry.path)
+                    subprocess.call(['rm', self.second_entry.path])
             if not os.path.exists(trash_entry_dir):
                 os.makedirs(trash_entry_dir)
 
