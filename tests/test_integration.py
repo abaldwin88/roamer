@@ -184,6 +184,18 @@ class TestOperations(unittest.TestCase): #pylint: disable=too-many-public-method
         with open(path, 'r') as research_file:
             self.assertEqual(research_file.read(), 'research file content')
 
+    def test_cut_paste_directory(self):
+        digest = self.session.get_digest('docs/')
+        self.session.remove_entry('docs/')
+        self.session.process()
+        second_session = MockSession(HELLO_DIR)
+        second_session.add_entry('docs/', digest)
+        second_session.process()
+        path = os.path.join(HELLO_DIR, 'docs/')
+        self.assertTrue(os.path.exists(path))
+        contents = os.listdir(path)
+        self.assertEqual(contents, ['research.txt'])
+
     def test_multiple_file_deletes(self):
         self.session.remove_entry('argh.md')
         self.session.process()

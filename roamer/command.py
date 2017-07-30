@@ -27,7 +27,7 @@ class Command(object):
             elif cmd == 'rm':
                 self.options = '-R'
             elif cmd == 'roamer-trash-copy':
-                pass
+                self.options = '-R'
             elif not self.second_entry.is_dir():
                 raise ValueError('Directories and Files cannot be interchanged.  ' \
                                  'Trailing slash (/) designates a directory.')
@@ -56,7 +56,7 @@ class Command(object):
             trash_entry_dir = os.path.join(TRASH_DIR, self.first_entry.digest)
             self.second_entry = Entry(self.first_entry.name, trash_entry_dir,
                                       self.first_entry.digest)
-            if  self.second_entry.persisted():
+            if self.second_entry.persisted():
                 if self.second_entry.is_dir():
                     subprocess.call(['rm', '-R', self.second_entry.path])
                 else:
