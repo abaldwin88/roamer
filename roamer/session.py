@@ -6,7 +6,7 @@ and passes into the Engine for processing
 
 from __future__ import print_function
 import os
-from roamer.python_edit import file_editor
+from roamer.file_edit import file_editor
 from roamer.directory import Directory
 from roamer.edit_directory import EditDirectory
 from roamer.engine import Engine
