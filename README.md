@@ -3,7 +3,7 @@
 
 [gif here]
 
-Roamer turns your favorite text editor into a light weight file manager.  Copy, Cut & Paste files en masse without leaving your terminal window.
+Roamer turns your favorite text editor into a lightweight file manager.  Copy, Cut & Paste files en masse without leaving your terminal window.
 
 ## Install
 #### Requirements
