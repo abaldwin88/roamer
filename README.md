@@ -67,12 +67,14 @@ my_file_3.txt | fc3da7f790a6
 ## Options
 
 #### Editor
-Roamer uses your default $EDITOR environment variable.  
+Roamer uses your default $EDITOR environment variable.
 
 To override a specific editor for roamer add this to your shell's config. (~/.bashrc   ~/.zshrc  etc)
 ```shell
 export ROAMER_EDITOR=emacs
 ```
+
+If no editor is set then vi will be used.
 
 #### Data Directory
 Roamer needs a directory for storing data between sessions.  By default this will be saved in `.roamer-data` in your home directory.

@@ -14,7 +14,7 @@ if ROAMER_EDITOR:
 else:
     EDITOR = os.environ.get('EDITOR')
     if not EDITOR:
-        EDITOR = 'vim'
+        EDITOR = 'vi'
 
 if EDITOR in ['vim', 'nvim', 'vi']:
     EXTRA_EDITOR_COMMAND = '+set backupcopy=yes'
