@@ -17,16 +17,13 @@ pip install --user roamer
 
 ## Usage
 
-To start a new roamer session enter:
-
+### Start Roamer
 ```shell
-roamer
+$ roamer
 ```
-
 This will open the current working directory in your default $EDITOR.  (See options section to override editor)
 
-You will see something like this:
-
+### Example Output
 ```shell
 " pwd: /Users/abaldwin/Desktop/stuff
 my_directory/ | b0556598b8f8
@@ -35,30 +32,33 @@ my_file_2.txt | fc3da7f790a6
 my_file_3.txt | fc3da7f790a6
 ```
 
-Each line represents a single entry (file or directory).  Each line is split into two sections using the pipe (|).  On the left side is the entry's name.  On the right side is the entry's hash.  You can think of the hash as a link to that entry's contents.
-A line starting with double quote (") is a comment and will be ignored.  At the top of each file session the current working directory is displayed in a comment.
+### Explanation
 
-Edit the file as desired.  To process the changes simply save and quit.  e.g.  vim `:wq`
+* Each line represents a single entry (file or directory)
+* On the left side of the pipe character is the entry's name
+* On the right side is the entry's hash.  You can think of the hash as a link to that entry's contents.
+* A line starting with double quote (") is a comment and will be ignored.
 
-Common operations:
+--> Make changes as desired.  When finished save and quit to commit the changes.  e.g.  vim `:wq`
 
+### Common Operations
 
-### Delete a file
+#### Delete a file
  * Delete the line
 
-### Copy a file
+#### Copy a file
 * Copy the entire line
 * Paste it onto a new line
 
-### Rename a file
+#### Rename a file
 * Type over the existing file's name
 * Do not modify the hash on the right side
 
-### Make a new empty file
+#### Make a new empty file
 * Add a new line
 * Type the new file's name
 
-### Move files between directories
+#### Move files between directories
 * Open up another terminal tab and run second roamer session
 * Copy / Paste lines between both sessions of roamer
 
