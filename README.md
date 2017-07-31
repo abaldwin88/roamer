@@ -15,7 +15,7 @@ Roamer turns your favorite text editor into a lightweight file manager.  Copy, C
 sudo pip install roamer
 ```
 
-For a high security install see here.
+For a high security install see [here](doc/faq.md).
 
 ## Usage
 
