@@ -56,6 +56,10 @@ my_file_3.txt | fc3da7f790a6
 * Type over the existing file's name
 * Do not modify the hash on the right side
 
+#### Copy over a file
+* Copy the hash from the first file
+* Replace the second file's hash
+
 #### Make a new empty file
 * Add a new line
 * Type the new file's name
