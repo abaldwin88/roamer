@@ -10,10 +10,12 @@ Roamer turns your favorite text editor into a lightweight file manager.  Copy, C
 * Python version: 2.7+, 3.2+
 * OS: Linux, MacOS, Windows WSL (Windows Subsystem for Linux)
 
-#### Install Command
+#### Command
 ```shell
-pip install --user roamer
+sudo pip install roamer
 ```
+
+For a high security install see here.
 
 ## Usage
 
