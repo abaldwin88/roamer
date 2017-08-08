@@ -1,5 +1,5 @@
 from distutils.core import setup
-version = '0.0.5'
+version = '0.1.1'
 setup(
   name = 'roamer',
   packages = ['roamer'],
