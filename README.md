@@ -1,7 +1,7 @@
 # Roamer [![Build Status](https://travis-ci.org/abaldwin88/roamer.svg?branch=master)](https://travis-ci.org/abaldwin88/roamer)
 ### The Plain Text File Manager
 
-[gif here]
+[![asciicast](https://asciinema.org/a/132587.png)](https://asciinema.org/a/132587)
 
 Roamer turns your favorite text editor into a lightweight file manager.  Copy, Cut & Paste files en masse without leaving your terminal window.
 
@@ -93,6 +93,6 @@ export ROAMER_DATA_PATH=~/meh/
 
 ## Editor Plugins
 
-This roamer library is editor agnostic and focused on processing plain text.  To enhance your experience with roamer consider installing roamer editor plug-ins for syntax highlighting, shortcuts, etc.
+This roamer library is editor agnostic and focused on processing plain text.  To enhance your experience with roamer consider installing roamer editor plug-ins:
 
 * https://github.com/abaldwin88/roamer.vim
