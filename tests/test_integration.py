@@ -260,6 +260,14 @@ class TestOperations(unittest.TestCase): #pylint: disable=too-many-public-method
             contents = os.listdir(path)
             self.assertEqual(contents, ['research.txt'])
 
+    def test_create_new_directory_and_file(self):
+        self.session.add_entry('new_file.txt')
+        self.session.add_entry('new_dir/')
+        self.session.process()
+        path = os.path.join(TEST_DIR, 'new_dir/')
+        self.assertTrue(os.path.exists(path))
+        self.assertTrue(os.path.isdir(path))
+
     def test_copy_file_same_name_no_extension(self):
         digest = self.session.get_digest('egg.txt')
         for _ in range(3):

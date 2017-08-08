@@ -7,7 +7,7 @@ from roamer.entry import Entry
 from roamer.record import Record
 from roamer.constant import TRASH_DIR
 
-COMMAND_ORDER = {'touch': 1, 'roamer-trash-copy': 2, 'cp': 3, 'rm': 4}
+COMMAND_ORDER = {'touch': 1, 'mkdir': 2, 'roamer-trash-copy': 3, 'cp': 4, 'rm': 5}
 
 class Command(object):
     def __init__(self, cmd, first_entry, second_entry=None):
