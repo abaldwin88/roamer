@@ -295,5 +295,23 @@ class TestOperations(unittest.TestCase): #pylint: disable=too-many-public-method
         self.assertTrue(os.path.exists(path))
         self.assertTrue(os.path.isfile(path))
 
+    def disabled_file_save_outside_roamer(self):
+        digest = self.session.get_digest('egg.txt')
+
+        path = os.path.join(TEST_DIR, 'egg.txt')
+        with open(path, 'a') as egg_file:
+            egg_file.write(' extra content')
+        os.utime(path, (1330712280, 1330712292))
+        self.session.process()
+
+        second_session = MockSession(DOC_DIR)
+        second_session.add_entry('egg.txt', digest)
+        second_session.process()
+        path = os.path.join(DOC_DIR, 'egg.txt')
+        self.assertTrue(os.path.exists(path))
+        with open(path, 'r') as egg_file:
+            self.assertEqual(egg_file.read(), 'egg file content extra content')
+
+
 if __name__ == '__main__':
     unittest.main()
