@@ -15,17 +15,13 @@ class Entry(object):
         self.name = name
         self.set_path()
         if self.name and self.name[0] == '"':
-            raise TypeError('roamer does not like files that start with # ')
+            raise TypeError('Unexpected double quote ( " )')
         if os.path.isdir(self.path) and name[-1] != '/':
             self.name = name + '/'
-        if digest:
-            self.digest = digest
-        else:
-            if self.persisted():
-                digest_text = self.path + str(os.path.getmtime(self.path))
-            else:
-                digest_text = self.path
-            if sys.version_info[0] == 3:
+        self.digest = digest
+        if digest is None and self.persisted():
+            digest_text = self.path + str(os.path.getmtime(self.path))
+            if sys.version_info[0] == 3 and digest_text:
                 digest_text = digest_text.encode('utf-8')
             self.full_digest = hashlib.sha224(digest_text).hexdigest()
             self.digest = self.full_digest[0:12]
