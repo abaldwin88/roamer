@@ -11,6 +11,7 @@ from tests.mock_session import MockSession
 BASE_ROAMER_PATH = os.environ.get('ROAMER_DATA_PATH') or expanduser('~/.roamer-data/')
 os.environ["ROAMER_DATA_PATH"] = expanduser(os.path.join(BASE_ROAMER_PATH, 'tmp/test/.roamer-data'))
 from roamer.constant import TEST_DIR, ROAMER_DATA_PATH, TRASH_DIR # pylint: disable=wrong-import-position
+from roamer.record import Record, DigesetCollision # pylint: disable=wrong-import-position
 
 HELLO_DIR = os.path.join(TEST_DIR, 'hello/')
 DOC_DIR = os.path.join(TEST_DIR, 'docs/')
@@ -139,8 +140,11 @@ class TestOperations(unittest.TestCase): #pylint: disable=too-many-public-method
 
     def test_multiple_simple_operations(self):
         self.test_create_new_file()
+        self.session.reload()
         self.test_delete_directory()
+        self.session.reload()
         self.test_rename_file()
+        self.session.reload()
         self.test_delete_file()
 
     def test_copy_file_between_directories(self):
@@ -211,6 +215,8 @@ class TestOperations(unittest.TestCase): #pylint: disable=too-many-public-method
         self.assertFalse(os.path.exists(ARGH_FILE))
         second_session = MockSession(TEST_DIR)
         second_session.add_entry('argh.md')
+        # TODO: mock out sleep or use version-ed digests
+        time.sleep(1)
         second_session.process()
         self.assertTrue(os.path.exists(ARGH_FILE))
         second_session.reload()
@@ -220,7 +226,7 @@ class TestOperations(unittest.TestCase): #pylint: disable=too-many-public-method
 
     def test_copy_over_existing_file(self):
         # TODO: mock out sleep or use version-ed digests
-        time.sleep(2)
+        time.sleep(1)
         erased_spam_digest = self.session.get_digest('spam.txt')
         egg_digest = self.session.get_digest('egg.txt')
         self.session.remove_entry('spam.txt')
@@ -294,6 +300,23 @@ class TestOperations(unittest.TestCase): #pylint: disable=too-many-public-method
         path = os.path.join(TEST_DIR, new_file)
         self.assertTrue(os.path.exists(path))
         self.assertTrue(os.path.isfile(path))
+
+    def test_entries_collision(self):
+        digest = self.session.get_digest('egg.txt')
+        directory = self.session.session.directory
+        entry = directory.entries[digest]
+        entry.digest = self.session.get_digest('argh.md')
+        with self.assertRaises(DigesetCollision):
+            Record().add_dir(directory)
+
+    def test_trash_collision(self):
+        digest = self.session.get_digest('egg.txt')
+        directory = self.session.session.directory
+        entry = directory.entries[digest]
+        with self.assertRaises(DigesetCollision):
+            Record().add_trash(entry.digest, entry.name, 'irrelevant-param')
+            Record().add_trash(entry.digest, entry.name, 'irrelevant-param')
+
 
     def disabled_file_save_outside_roamer(self):
         digest = self.session.get_digest('egg.txt')

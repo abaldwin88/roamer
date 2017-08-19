@@ -4,7 +4,7 @@ Saves entries and their digests onto disk so they can be used in later sessions.
 import os
 import json
 from roamer.entry import Entry
-from roamer.constant import ENTRIES_JSON_PATH, TRASH_JSON_PATH
+from roamer.constant import ENTRIES_JSON_PATH, TRASH_JSON_PATH, ROAMER_DATA_PATH
 from roamer.directory import Directory
 
 class Record(object):
@@ -28,16 +28,24 @@ class Record(object):
         entries = {}
         for entry in self.entries.values():
             if entry.directory != directory:
-                entries[entry.digest] = {'name': entry.name, 'directory': entry.directory.path}
+                assign(entries, entry.digest, entry.name, entry.directory.path)
         for entry in directory.entries.values():
-            entries[entry.digest] = {'name': entry.name, 'directory': entry.directory.path}
+            assign(entries, entry.digest, entry.name, entry.directory.path)
         with open(ENTRIES_JSON_PATH, 'w') as outfile:
             json.dump(entries, outfile)
 
     def add_trash(self, digest, name, directory):
         entries = {}
         for entry in self.trash_entries.values():
-            entries[entry.digest] = {'name': entry.name, 'directory': entry.directory.path}
-        entries[digest] = {'name': name, 'directory': directory}
+            assign(entries, entry.digest, entry.name, entry.directory.path)
+        assign(entries, digest, name, directory)
         with open(TRASH_JSON_PATH, 'w') as outfile:
             json.dump(entries, outfile)
+
+def assign(entries, digest, name, directory):
+    if digest in entries:
+        raise DigesetCollision('Hash collision.  Try deleting: %s' % ROAMER_DATA_PATH)
+    entries[digest] = {'name': name, 'directory': directory}
+
+class DigesetCollision(Exception):
+    pass
