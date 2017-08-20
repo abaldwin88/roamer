@@ -7,9 +7,9 @@ from os.path import expanduser
 import shutil
 import unittest
 import time
-from tests.mock_session import MockSession
 BASE_ROAMER_PATH = os.environ.get('ROAMER_DATA_PATH') or expanduser('~/.roamer-data/')
 os.environ["ROAMER_DATA_PATH"] = expanduser(os.path.join(BASE_ROAMER_PATH, 'tmp/test/.roamer-data'))
+from tests.mock_session import MockSession # pylint: disable=wrong-import-position
 from roamer.constant import TEST_DIR, ROAMER_DATA_PATH, TRASH_DIR # pylint: disable=wrong-import-position
 from roamer.record import Record, DigesetCollision # pylint: disable=wrong-import-position
 

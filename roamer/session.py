@@ -11,6 +11,7 @@ from roamer.directory import Directory
 from roamer.edit_directory import EditDirectory
 from roamer.engine import Engine
 from roamer.record import Record
+from roamer.database import db_init
 
 class Session(object):
     def __init__(self, cwd=None):
@@ -20,6 +21,7 @@ class Session(object):
         raw_entries = os.listdir(self.cwd)
         self.directory = Directory(self.cwd, raw_entries)
         self.edit_directory = None
+        db_init()
         Record().add_dir(self.directory)
 
     def run(self):
