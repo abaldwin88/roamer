@@ -117,9 +117,9 @@ class TestOperations(unittest.TestCase): #pylint: disable=too-many-public-method
         self.session.add_entry('argh.md')
         self.session.process()
         path = ARGH_FILE
-        self.assertFalse(os.path.exists(path))
+        self.assertTrue(os.path.exists(path))
         with open(path, 'r') as argh_file:
-            self.assertEqual(argh_file.read(), 'argh file content')
+            self.assertEqual(argh_file.read(), '')
 
     def test_comment_line(self):
         original_entry_count = len([entry for entry in os.listdir(TEST_DIR)])
