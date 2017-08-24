@@ -3,7 +3,7 @@ Determines commands to be run in order to update the original directory and matc
 the state of the edit directory.
 """
 from roamer.command import Command
-from roamer.record import Record
+from roamer import record
 from roamer.entry import Entry
 
 class Engine(object):
@@ -43,8 +43,9 @@ class Engine(object):
         unknown_digests = set(self.edit_dir.entries.keys()) - set(self.original_dir.entries.keys())
 
         for digest in filter(None, unknown_digests):
-            record = Record(self.original_dir)
-            outside_entry = record.entries.get(digest) or record.trash_entries.get(digest)
+            entries = record.load(filter_dir=self.original_dir)
+            trash_entries = record.load(trash=True)
+            outside_entry = entries.get(digest) or trash_entries.get(digest)
             if outside_entry is None:
                 raise Exception('digest %s not found' % digest)
 

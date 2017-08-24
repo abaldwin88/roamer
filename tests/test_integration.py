@@ -11,7 +11,7 @@ BASE_ROAMER_PATH = os.environ.get('ROAMER_DATA_PATH') or expanduser('~/.roamer-d
 os.environ["ROAMER_DATA_PATH"] = expanduser(os.path.join(BASE_ROAMER_PATH, 'tmp/test/.roamer-data'))
 from tests.mock_session import MockSession # pylint: disable=wrong-import-position
 from roamer.constant import TEST_DIR, ROAMER_DATA_PATH, TRASH_DIR # pylint: disable=wrong-import-position
-from roamer.record import Record, DigesetCollision # pylint: disable=wrong-import-position
+from roamer import record # pylint: disable=wrong-import-position
 
 HELLO_DIR = os.path.join(TEST_DIR, 'hello/')
 DOC_DIR = os.path.join(TEST_DIR, 'docs/')
@@ -306,16 +306,16 @@ class TestOperations(unittest.TestCase): #pylint: disable=too-many-public-method
         directory = self.session.session.directory
         entry = directory.entries[digest]
         entry.digest = self.session.get_digest('argh.md')
-        with self.assertRaises(DigesetCollision):
-            Record().add_dir(directory)
+        with self.assertRaises(record.DigesetCollision):
+            record.add_dir(directory)
 
     def test_trash_collision(self):
         digest = self.session.get_digest('egg.txt')
         directory = self.session.session.directory
         entry = directory.entries[digest]
-        with self.assertRaises(DigesetCollision):
-            Record().add_trash(entry.digest, entry.name, 'irrelevant-param')
-            Record().add_trash(entry.digest, entry.name, 'irrelevant-param')
+        with self.assertRaises(record.DigesetCollision):
+            record.add_trash(entry.digest, entry.name, 'irrelevant-param')
+            record.add_trash(entry.digest, entry.name, 'irrelevant-param')
 
 
     def disabled_file_save_outside_roamer(self):

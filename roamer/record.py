@@ -6,56 +6,47 @@ from roamer.constant import ROAMER_DATA_PATH
 from roamer.directory import Directory
 from roamer.database import connection
 
-class Record(object):
-    def __init__(self, filter_directory=None):
-        self._filter_directory = filter_directory
-        self.entries = self._load(trash=False)
-        self.trash_entries = self._load(trash=True)
+def load(filter_dir=None, trash=False):
+    dictionary = {}
+    conn = connection()
+    cursor = conn.cursor()
+    query = 'SELECT * FROM entries WHERE trash = ? AND path != ?'
+    for row in cursor.execute(query, (trash, str(filter_dir))):
+        entry = Entry(row['name'], Directory(row['path'], []), row['digest'])
+        dictionary[row['digest']] = entry
+    return dictionary
 
-    def _load(self, trash):
-        dictionary = {}
-        conn = connection()
-        cursor = conn.cursor()
-        query = 'SELECT * FROM entries WHERE trash = ? AND path != ?'
-        for row in cursor.execute(query, (trash, str(self._filter_directory))):
-            entry = Entry(row['name'], Directory(row['path'], []), row['digest'])
-            dictionary[row['digest']] = entry
-        return dictionary
+def add_dir(directory):
+    conn = connection()
+    query = 'DELETE FROM entries WHERE path = ?'
+    conn.execute(query, (str(directory),))
+    for entry in directory.entries.values():
+        check_conflict(conn, entry.digest, entry.name, entry.directory.path, False)
+        conn.execute("""
+                       INSERT OR REPLACE INTO entries(digest, name, path, trash)
+                       VALUES ( ?, ?, ?, ? )
+                     """, (entry.digest, entry.name, entry.directory.path, False))
+    conn.commit()
 
-    def add_dir(self, directory):
-        conn = connection()
-        entries = {}
-        for entry in self.entries.values():
-            if entry.directory != directory:
-                assign(entries, entry.digest, entry.name, entry.directory.path)
-        for entry in directory.entries.values():
-            assign(entries, entry.digest, entry.name, entry.directory.path)
+def add_trash(digest, name, directory):
+    conn = connection()
+    check_conflict(conn, digest, name, directory, True)
+    conn.execute("""
+                   INSERT OR REPLACE INTO entries(digest, name, path, trash)
+                   VALUES ( ?, ?, ?, ? )
+                 """, (digest, name, directory, True))
+    conn.commit()
 
-        for digest, entry in entries.items():
-            conn.execute("""
-                           INSERT OR REPLACE INTO entries(digest, name, path, trash)
-                           VALUES ( ?, ?, ?, ? )
-                         """, (digest, entry['name'], entry['directory'], False))
-        conn.commit()
-
-    def add_trash(self, digest, name, directory):
-        conn = connection()
-        entries = {}
-        for entry in self.trash_entries.values():
-            assign(entries, entry.digest, entry.name, entry.directory.path)
-        assign(entries, digest, name, directory)
-
-        for entry_digest, entry in entries.items():
-            conn.execute("""
-                           INSERT OR REPLACE INTO entries(digest, name, path, trash)
-                           VALUES ( ?, ?, ?, ? )
-                         """, (entry_digest, entry['name'], entry['directory'], True))
-        conn.commit()
-
-def assign(entries, digest, name, directory):
-    if digest in entries:
-        raise DigesetCollision('Hash collision.  Try deleting: %s' % ROAMER_DATA_PATH)
-    entries[digest] = {'name': name, 'directory': directory}
+def check_conflict(conn, digest, name, path, is_trash):
+    query = 'SELECT * from entries where digest = ? AND trash = ?'
+    cursor = conn.cursor()
+    cursor.execute(query, (digest, is_trash))
+    result = cursor.fetchone()
+    if not result:
+        return False
+    if result['name'] == name and result['path'] == path and not is_trash:
+        return False
+    raise DigesetCollision('Hash collision.  Try deleting: %s' % ROAMER_DATA_PATH)
 
 class DigesetCollision(Exception):
     pass
