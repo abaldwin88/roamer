@@ -22,23 +22,20 @@ def add_dir(directory):
     conn.execute(query, (str(directory),))
     for entry in directory.entries.values():
         check_conflict(conn, entry.digest, entry.name, entry.directory.path, False)
-        conn.execute("""
-                       INSERT OR REPLACE INTO entries(digest, name, path, trash)
-                       VALUES ( ?, ?, ?, ? )
-                     """, (entry.digest, entry.name, entry.directory.path, False))
+        query = 'INSERT OR REPLACE INTO entries(digest, name, path, trash)' \
+                'VALUES ( ?, ?, ?, ? )'
+        conn.execute(query, (entry.digest, entry.name, entry.directory.path, False))
     conn.commit()
 
 def add_trash(digest, name, directory):
     conn = connection()
     check_conflict(conn, digest, name, directory, True)
-    conn.execute("""
-                   INSERT OR REPLACE INTO entries(digest, name, path, trash)
-                   VALUES ( ?, ?, ?, ? )
-                 """, (digest, name, directory, True))
+    query = 'INSERT OR REPLACE INTO entries(digest, name, path, trash) VALUES ( ?, ?, ?, ? )'
+    conn.execute(query, (digest, name, directory, True))
     conn.commit()
 
 def check_conflict(conn, digest, name, path, is_trash):
-    query = 'SELECT * from entries where digest = ? AND trash = ?'
+    query = 'SELECT * FROM entries WHERE digest = ? AND trash = ?'
     cursor = conn.cursor()
     cursor.execute(query, (digest, is_trash))
     result = cursor.fetchone()
