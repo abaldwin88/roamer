@@ -318,7 +318,7 @@ class TestOperations(unittest.TestCase): #pylint: disable=too-many-public-method
             record.add_trash(entry.digest, entry.name, 'irrelevant-param')
 
 
-    def disabled_file_save_outside_roamer(self):
+    def test_file_save_outside_roamer(self):
         digest = self.session.get_digest('egg.txt')
 
         path = os.path.join(TEST_DIR, 'egg.txt')
@@ -329,6 +329,8 @@ class TestOperations(unittest.TestCase): #pylint: disable=too-many-public-method
 
         second_session = MockSession(DOC_DIR)
         second_session.add_entry('egg.txt', digest)
+        # import pdb; pdb.set_trace()
+        # broke here
         second_session.process()
         path = os.path.join(DOC_DIR, 'egg.txt')
         self.assertTrue(os.path.exists(path))

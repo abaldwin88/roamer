@@ -5,6 +5,7 @@ the state of the edit directory.
 from roamer.command import Command
 from roamer import record
 from roamer.entry import Entry
+from roamer.directory import Directory
 
 class Engine(object):
     def __init__(self, original_dir, edit_dir):
@@ -43,8 +44,8 @@ class Engine(object):
         unknown_digests = set(self.edit_dir.entries.keys()) - set(self.original_dir.entries.keys())
 
         for digest in filter(None, unknown_digests):
-            entries = record.load(filter_dir=self.original_dir)
-            trash_entries = record.load(trash=True)
+            entries = load_entries(filter_dir=self.original_dir)
+            trash_entries = load_entries(trash=True)
             outside_entry = entries.get(digest) or trash_entries.get(digest)
             if outside_entry is None:
                 raise Exception('digest %s not found' % digest)
@@ -67,3 +68,11 @@ class Engine(object):
 
     def run_commands(self):
         return [command.execute() for command in sorted(self.commands)]
+
+
+def load_entries(**kwargs):
+    dictionary = {}
+    for row in record.load(**kwargs):
+        entry = Entry(row['name'], Directory(row['path'], []), row['digest'])
+        dictionary[row['digest']] = entry
+    return dictionary

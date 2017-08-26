@@ -18,10 +18,10 @@ class Session(object):
         self.cwd = cwd
         if cwd is None:
             self.cwd = os.getcwd()
+        db_init()
         raw_entries = os.listdir(self.cwd)
         self.directory = Directory(self.cwd, raw_entries)
         self.edit_directory = None
-        db_init()
         record.add_dir(self.directory)
 
     def run(self):

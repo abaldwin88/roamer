@@ -66,3 +66,10 @@ class Command(object):
 
             record.add_trash(self.first_entry.digest, self.second_entry.name, trash_entry_dir)
         subprocess.call(self.to_list(), shell=False)
+        self._increment_version()
+
+    def _increment_version(self):
+        if self.cmd == 'touch' or self.cmd == 'mkdir':
+            self.first_entry.increment_version()
+        elif self.cmd == 'cp':
+            self.second_entry.increment_version()
