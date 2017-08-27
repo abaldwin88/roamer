@@ -6,7 +6,6 @@ import os
 from os.path import expanduser
 import shutil
 import unittest
-import time
 BASE_ROAMER_PATH = os.environ.get('ROAMER_DATA_PATH') or expanduser('~/.roamer-data/')
 os.environ["ROAMER_DATA_PATH"] = expanduser(os.path.join(BASE_ROAMER_PATH, 'tmp/test/.roamer-data'))
 from tests.mock_session import MockSession # pylint: disable=wrong-import-position
@@ -215,8 +214,6 @@ class TestOperations(unittest.TestCase): #pylint: disable=too-many-public-method
         self.assertFalse(os.path.exists(ARGH_FILE))
         second_session = MockSession(TEST_DIR)
         second_session.add_entry('argh.md')
-        # TODO: mock out sleep or use version-ed digests
-        time.sleep(1)
         second_session.process()
         self.assertTrue(os.path.exists(ARGH_FILE))
         second_session.reload()
@@ -225,8 +222,6 @@ class TestOperations(unittest.TestCase): #pylint: disable=too-many-public-method
         self.assertFalse(os.path.exists(ARGH_FILE))
 
     def test_copy_over_existing_file(self):
-        # TODO: mock out sleep or use version-ed digests
-        time.sleep(1)
         erased_spam_digest = self.session.get_digest('spam.txt')
         egg_digest = self.session.get_digest('egg.txt')
         self.session.remove_entry('spam.txt')
@@ -329,8 +324,6 @@ class TestOperations(unittest.TestCase): #pylint: disable=too-many-public-method
 
         second_session = MockSession(DOC_DIR)
         second_session.add_entry('egg.txt', digest)
-        # import pdb; pdb.set_trace()
-        # broke here
         second_session.process()
         path = os.path.join(DOC_DIR, 'egg.txt')
         self.assertTrue(os.path.exists(path))
