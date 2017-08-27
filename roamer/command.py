@@ -4,7 +4,7 @@ Represents a single os command
 import os
 import subprocess
 from roamer.entry import Entry
-from roamer.record import Record
+from roamer import record
 from roamer.constant import TRASH_DIR
 
 COMMAND_ORDER = {'touch': 1, 'mkdir': 2, 'roamer-trash-copy': 3, 'cp': 4, 'rm': 5}
@@ -64,5 +64,12 @@ class Command(object):
             if not os.path.exists(trash_entry_dir):
                 os.makedirs(trash_entry_dir)
 
-            Record().add_trash(self.first_entry.digest, self.second_entry.name, trash_entry_dir)
+            record.add_trash(self.first_entry.digest, self.second_entry.name, trash_entry_dir)
         subprocess.call(self.to_list(), shell=False)
+        self._increment_version()
+
+    def _increment_version(self):
+        if self.cmd == 'touch' or self.cmd == 'mkdir':
+            self.first_entry.increment_version()
+        elif self.cmd == 'cp':
+            self.second_entry.increment_version()

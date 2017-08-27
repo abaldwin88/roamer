@@ -5,6 +5,7 @@ Represents a single entry from the operating system.  Either a file or a directo
 import os
 import sys
 import hashlib
+from roamer import record
 
 class Entry(object):
     """
@@ -13,19 +14,16 @@ class Entry(object):
     def __init__(self, name, directory, digest=None):
         self.directory = directory
         self.name = name
-        self.set_path()
+        self._set_path()
         if self.name and self.name[0] == '"':
-            raise TypeError('roamer does not like files that start with # ')
+            raise TypeError('Unexpected double quote ( " )')
         if os.path.isdir(self.path) and name[-1] != '/':
             self.name = name + '/'
-        if digest:
-            self.digest = digest
-        else:
-            if self.persisted():
-                digest_text = self.path + str(os.path.getmtime(self.path))
-            else:
-                digest_text = self.path
-            if sys.version_info[0] == 3:
+        self.digest = digest
+        if digest is None and self.persisted():
+            self._set_version()
+            digest_text = self.path + str(self.version)
+            if sys.version_info[0] == 3 and digest_text:
                 digest_text = digest_text.encode('utf-8')
             self.full_digest = hashlib.sha224(digest_text).hexdigest()
             self.digest = self.full_digest[0:12]
@@ -33,12 +31,24 @@ class Entry(object):
     def __str__(self):
         return "%s | %s" % (self.name, self.digest)
 
-    def set_path(self):
+    def _set_path(self):
         self.path = os.path.join(str(self.directory), self.name)
+
+    def _set_version(self):
+        self.version = record.get_version(self.path, self.name)
+        if self.version is None and self.persisted():
+            self.version = int(os.path.getmtime(self.path))
+            record.set_version(self.path, self.name, self.version)
+
+    def increment_version(self):
+        self._set_version()
+        if self.version:
+            self.version += 1
+            record.set_version(self.path, self.name, self.version)
 
     def append_to_name(self, text):
         self.name = self.base_name() + text + self.extension()
-        self.set_path()
+        self._set_path()
 
     def is_dir(self):
         return self.name[-1] == '/'

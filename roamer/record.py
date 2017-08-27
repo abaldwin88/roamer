@@ -1,43 +1,61 @@
 """
 Saves entries and their digests onto disk so they can be used in later sessions.
 """
-import os
-import json
-from roamer.entry import Entry
-from roamer.constant import ENTRIES_JSON_PATH, TRASH_JSON_PATH
-from roamer.directory import Directory
+from roamer.constant import ROAMER_DATA_PATH
+from roamer.database import connection
 
-class Record(object):
-    def __init__(self, filter_directory=None):
-        self._filter_directory = filter_directory
-        self.entries = self._load(ENTRIES_JSON_PATH)
-        self.trash_entries = self._load(TRASH_JSON_PATH)
+def load(filter_dir=None, trash=False):
+    conn = connection()
+    cursor = conn.cursor()
+    query = 'SELECT * FROM entries WHERE trash = ? AND path != ?'
+    cursor.execute(query, (trash, str(filter_dir)))
+    return cursor.fetchall()
 
-    def _load(self, path):
-        dictionary = {}
-        if os.path.exists(path):
-            with open(path) as data_file:
-                data = json.load(data_file)
-            for digest, entry_data in data.items():
-                entry = Entry(entry_data['name'], Directory(entry_data['directory'], []), digest)
-                if entry.directory != self._filter_directory:
-                    dictionary[entry.digest] = entry
-        return dictionary
+def add_dir(directory):
+    conn = connection()
+    query = 'DELETE FROM entries WHERE path = ?'
+    conn.execute(query, (str(directory),))
+    for entry in directory.entries.values():
+        check_conflict(conn, entry.digest, entry.name, entry.directory.path, False)
+        query = 'INSERT OR REPLACE INTO entries(digest, name, path, trash)' \
+                'VALUES ( ?, ?, ?, ? )'
+        conn.execute(query, (entry.digest, entry.name, entry.directory.path, False))
+    conn.commit()
 
-    def add_dir(self, directory):
-        entries = {}
-        for entry in self.entries.values():
-            if entry.directory != directory:
-                entries[entry.digest] = {'name': entry.name, 'directory': entry.directory.path}
-        for entry in directory.entries.values():
-            entries[entry.digest] = {'name': entry.name, 'directory': entry.directory.path}
-        with open(ENTRIES_JSON_PATH, 'w') as outfile:
-            json.dump(entries, outfile)
+def add_trash(digest, name, directory):
+    conn = connection()
+    check_conflict(conn, digest, name, directory, True)
+    query = 'INSERT OR REPLACE INTO entries(digest, name, path, trash) VALUES ( ?, ?, ?, ? )'
+    conn.execute(query, (digest, name, directory, True))
+    conn.commit()
 
-    def add_trash(self, digest, name, directory):
-        entries = {}
-        for entry in self.trash_entries.values():
-            entries[entry.digest] = {'name': entry.name, 'directory': entry.directory.path}
-        entries[digest] = {'name': name, 'directory': directory}
-        with open(TRASH_JSON_PATH, 'w') as outfile:
-            json.dump(entries, outfile)
+def check_conflict(conn, digest, name, path, is_trash):
+    query = 'SELECT * FROM entries WHERE digest = ? AND trash = ?'
+    cursor = conn.cursor()
+    cursor.execute(query, (digest, is_trash))
+    result = cursor.fetchone()
+    if not result:
+        return False
+    if result['name'] == name and result['path'] == path and not is_trash:
+        return False
+    raise DigesetCollision('Hash collision.  Try deleting: %s' % ROAMER_DATA_PATH)
+
+def get_version(path, name):
+    conn = connection()
+    cursor = conn.cursor()
+    query = 'SELECT version FROM modifications WHERE path = ? AND name = ?'
+    cursor.execute(query, (path, name))
+    result = cursor.fetchone()
+    if not result:
+        return None
+    return result['version']
+
+def set_version(path, name, version):
+    conn = connection()
+    query = 'INSERT OR REPLACE INTO modifications(path, name, version) VALUES ( ?, ?, ? )'
+    conn.execute(query, (path, name, version))
+    conn.commit()
+
+
+class DigesetCollision(Exception):
+    pass

@@ -10,17 +10,19 @@ from roamer.file_edit import file_editor
 from roamer.directory import Directory
 from roamer.edit_directory import EditDirectory
 from roamer.engine import Engine
-from roamer.record import Record
+from roamer import record
+from roamer.database import db_init
 
 class Session(object):
     def __init__(self, cwd=None):
         self.cwd = cwd
         if cwd is None:
             self.cwd = os.getcwd()
+        db_init()
         raw_entries = os.listdir(self.cwd)
         self.directory = Directory(self.cwd, raw_entries)
         self.edit_directory = None
-        Record().add_dir(self.directory)
+        record.add_dir(self.directory)
 
     def run(self):
         output = file_editor(self.directory.text())
@@ -32,4 +34,4 @@ class Session(object):
         engine.compile_commands()
         print(engine.commands_to_str())
         engine.run_commands()
-        Record().add_dir(Directory(self.cwd, os.listdir(self.cwd)))
+        record.add_dir(Directory(self.cwd, os.listdir(self.cwd)))

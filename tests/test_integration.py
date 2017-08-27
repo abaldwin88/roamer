@@ -6,11 +6,11 @@ import os
 from os.path import expanduser
 import shutil
 import unittest
-import time
-from tests.mock_session import MockSession
 BASE_ROAMER_PATH = os.environ.get('ROAMER_DATA_PATH') or expanduser('~/.roamer-data/')
 os.environ["ROAMER_DATA_PATH"] = expanduser(os.path.join(BASE_ROAMER_PATH, 'tmp/test/.roamer-data'))
+from tests.mock_session import MockSession # pylint: disable=wrong-import-position
 from roamer.constant import TEST_DIR, ROAMER_DATA_PATH, TRASH_DIR # pylint: disable=wrong-import-position
+from roamer import record # pylint: disable=wrong-import-position
 
 HELLO_DIR = os.path.join(TEST_DIR, 'hello/')
 DOC_DIR = os.path.join(TEST_DIR, 'docs/')
@@ -116,9 +116,9 @@ class TestOperations(unittest.TestCase): #pylint: disable=too-many-public-method
         self.session.add_entry('argh.md')
         self.session.process()
         path = ARGH_FILE
-        self.assertFalse(os.path.exists(path))
+        self.assertTrue(os.path.exists(path))
         with open(path, 'r') as argh_file:
-            self.assertEqual(argh_file.read(), 'argh file content')
+            self.assertEqual(argh_file.read(), '')
 
     def test_comment_line(self):
         original_entry_count = len([entry for entry in os.listdir(TEST_DIR)])
@@ -139,8 +139,11 @@ class TestOperations(unittest.TestCase): #pylint: disable=too-many-public-method
 
     def test_multiple_simple_operations(self):
         self.test_create_new_file()
+        self.session.reload()
         self.test_delete_directory()
+        self.session.reload()
         self.test_rename_file()
+        self.session.reload()
         self.test_delete_file()
 
     def test_copy_file_between_directories(self):
@@ -219,8 +222,6 @@ class TestOperations(unittest.TestCase): #pylint: disable=too-many-public-method
         self.assertFalse(os.path.exists(ARGH_FILE))
 
     def test_copy_over_existing_file(self):
-        # TODO: mock out sleep or use version-ed digests
-        time.sleep(2)
         erased_spam_digest = self.session.get_digest('spam.txt')
         egg_digest = self.session.get_digest('egg.txt')
         self.session.remove_entry('spam.txt')
@@ -295,7 +296,24 @@ class TestOperations(unittest.TestCase): #pylint: disable=too-many-public-method
         self.assertTrue(os.path.exists(path))
         self.assertTrue(os.path.isfile(path))
 
-    def disabled_file_save_outside_roamer(self):
+    def test_entries_collision(self):
+        digest = self.session.get_digest('egg.txt')
+        directory = self.session.session.directory
+        entry = directory.entries[digest]
+        entry.digest = self.session.get_digest('argh.md')
+        with self.assertRaises(record.DigesetCollision):
+            record.add_dir(directory)
+
+    def test_trash_collision(self):
+        digest = self.session.get_digest('egg.txt')
+        directory = self.session.session.directory
+        entry = directory.entries[digest]
+        with self.assertRaises(record.DigesetCollision):
+            record.add_trash(entry.digest, entry.name, 'irrelevant-param')
+            record.add_trash(entry.digest, entry.name, 'irrelevant-param')
+
+
+    def test_file_save_outside_roamer(self):
         digest = self.session.get_digest('egg.txt')
 
         path = os.path.join(TEST_DIR, 'egg.txt')
