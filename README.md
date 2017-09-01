@@ -82,6 +82,8 @@ export ROAMER_EDITOR=emacs
 
 If no editor is set then vi will be used.
 
+[Works with any editor?](doc/faq.md#any-text-editor)
+
 #### Data Directory
 Roamer needs a directory for storing data between sessions.  By default this will be saved in `.roamer-data` in your home directory.
 

@@ -16,11 +16,18 @@ else:
     if not EDITOR:
         EDITOR = 'vi'
 
-if EDITOR in ['vim', 'nvim', 'vi']:
-    EXTRA_EDITOR_COMMAND = '+set backupcopy=yes'
-else:
-    # nano and emacs work without any extra commands
+if ' ' in EDITOR:
     EXTRA_EDITOR_COMMAND = None
+else:
+    if os.path.basename(EDITOR) in ('vim', 'nvim', 'vi'):
+        EXTRA_EDITOR_COMMAND = '+set backupcopy=yes'
+    elif os.path.basename(EDITOR) in ('atom', 'code', 'mate'):
+        EXTRA_EDITOR_COMMAND = '-w'
+    elif os.path.basename(EDITOR) == 'subl':
+        EXTRA_EDITOR_COMMAND = '-n -w'
+    else:
+        # nano and emacs work without any extra commands
+        EXTRA_EDITOR_COMMAND = None
 
 
 def file_editor(content):
@@ -30,9 +37,11 @@ def file_editor(content):
         temp.write(content)
         temp.flush()
         if EXTRA_EDITOR_COMMAND:
-            call([EDITOR, EXTRA_EDITOR_COMMAND, temp.name])
+            exit_code = call([EDITOR, EXTRA_EDITOR_COMMAND, temp.name])
         else:
-            call([EDITOR, temp.name])
+            exit_code = call(EDITOR.split() + [temp.name])
+        if exit_code != 0:
+            sys.exit()
         temp.seek(0)
         output = temp.read()
         if sys.version_info[0] == 3:
