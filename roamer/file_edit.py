@@ -19,14 +19,12 @@ else:
 if ' ' in EDITOR:
     EXTRA_EDITOR_COMMAND = None
 else:
-    if os.path.basename(EDITOR) in ['vim', 'nvim', 'vi']:
+    if os.path.basename(EDITOR) in ('vim', 'nvim', 'vi'):
         EXTRA_EDITOR_COMMAND = '+set backupcopy=yes'
-    elif os.path.basename(EDITOR) == 'atom':
-        EXTRA_EDITOR_COMMAND = '--wait'
+    elif os.path.basename(EDITOR) in ('atom', 'code', 'mate'):
+        EXTRA_EDITOR_COMMAND = '-w'
     elif os.path.basename(EDITOR) == 'subl':
         EXTRA_EDITOR_COMMAND = '-n -w'
-    elif os.path.basename(EDITOR) == 'mate':
-        EXTRA_EDITOR_COMMAND = '-w'
     else:
         # nano and emacs work without any extra commands
         EXTRA_EDITOR_COMMAND = None
