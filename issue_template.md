@@ -1,6 +1,6 @@
 Bug Report Template
 
-## roamer version:
+## roamer --version:
 ## OS:
 ## Python version:
 ## Steps to reproduce (start with removing ~/.roamer-data):
