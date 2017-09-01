@@ -39,9 +39,11 @@ def file_editor(content):
         temp.write(content)
         temp.flush()
         if EXTRA_EDITOR_COMMAND:
-            call([EDITOR, EXTRA_EDITOR_COMMAND, temp.name])
+            exit_code = call([EDITOR, EXTRA_EDITOR_COMMAND, temp.name])
         else:
-            call(EDITOR.split() + [temp.name])
+            exit_code = call(EDITOR.split() + [temp.name])
+        if exit_code != 0:
+            sys.exit()
         temp.seek(0)
         output = temp.read()
         if sys.version_info[0] == 3:
