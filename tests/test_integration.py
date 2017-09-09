@@ -137,6 +137,19 @@ class TestOperations(unittest.TestCase): #pylint: disable=too-many-public-method
         self.session.process()
         self.assertTrue(os.path.exists(ARGH_FILE))
 
+    def test_swap_files(self):
+        spam_digest = self.session.get_digest('spam.txt')
+        self.session.remove_entry('spam.txt')
+        self.session.rename('egg.txt', 'spam.txt')
+        self.session.add_entry('egg.txt', spam_digest)
+        self.session.process()
+        path = os.path.join(TEST_DIR, 'egg.txt')
+        with open(path, 'r') as egg_file:
+            self.assertEqual(egg_file.read(), 'spam file content')
+        path = os.path.join(TEST_DIR, 'spam.txt')
+        with open(path, 'r') as spam_file:
+            self.assertEqual(spam_file.read(), 'egg file content')
+
     def test_multiple_simple_operations(self):
         self.test_create_new_file()
         self.session.reload()

@@ -51,6 +51,9 @@ class Command(object):
         return COMMAND_ORDER[self.cmd]
 
     def execute(self):
+        if self.cmd == 'cp':
+            name, directory = record.path_by_digest(self.first_entry.digest)
+            self.first_entry = Entry(name, directory, self.first_entry.digest)
         if self.cmd == 'roamer-trash-copy':
             self.cmd = 'cp'
             trash_entry_dir = os.path.join(TRASH_DIR, self.first_entry.digest)

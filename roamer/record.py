@@ -56,6 +56,16 @@ def set_version(path, name, version):
     conn.execute(query, (path, name, version))
     conn.commit()
 
+def path_by_digest(digest):
+    conn = connection()
+    cursor = conn.cursor()
+    query = 'SELECT name, path FROM entries WHERE digest = ?'
+    cursor.execute(query, (digest,))
+    result = cursor.fetchone()
+    if not result:
+        raise Exception('digest %s not found in database' % digest)
+    return result['name'], result['path']
+
 
 class DigesetCollision(Exception):
     pass
