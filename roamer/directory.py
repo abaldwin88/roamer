@@ -25,7 +25,8 @@ class Directory(object):
     def text(self):
         pwd_comment = '" pwd: %s' % self.path
         content = [pwd_comment]
-        for entry in self.entries.values():
+        entries = sorted(self.entries.values())
+        for entry in entries:
             content.append(str(entry))
         return '\n'.join(content)
 
