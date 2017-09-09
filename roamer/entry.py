@@ -31,6 +31,9 @@ class Entry(object):
     def __str__(self):
         return "%s | %s" % (self.name, self.digest)
 
+    def __lt__(self, other):
+        return self.path < other.path
+
     def _set_path(self):
         self.path = os.path.join(str(self.directory), self.name)
 
