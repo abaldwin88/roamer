@@ -51,6 +51,14 @@ class TestOperations(unittest.TestCase): #pylint: disable=too-many-public-method
         self.assertTrue('egg.txt' in self.session.text)
         self.assertTrue('argh.md' in self.session.text)
 
+    def test_no_changes_does_nothing(self):
+        self.session.process()
+        self.assertTrue('hello/' in self.session.text)
+        self.assertTrue('docs/' in self.session.text)
+        self.assertTrue('spam.txt' in self.session.text)
+        self.assertTrue('egg.txt' in self.session.text)
+        self.assertTrue('argh.md' in self.session.text)
+
     def test_create_new_file(self):
         self.session.add_entry('new_file.txt')
         self.session.process()
