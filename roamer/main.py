@@ -8,8 +8,11 @@ import pkg_resources
 from roamer.session import Session
 
 def start(argv):
+    skipapproval = False
     if '--version' in argv:
         version = pkg_resources.require('roamer')[0].version
         print(version)
         return
-    Session().run()
+    if '--skip-approval' in argv:
+        skipapproval = True
+    Session(skipapproval=skipapproval).run()
