@@ -333,6 +333,24 @@ class TestOperations(unittest.TestCase): #pylint: disable=too-many-public-method
             record.add_trash(entry.digest, entry.name, 'irrelevant-param')
             record.add_trash(entry.digest, entry.name, 'irrelevant-param')
 
+    def test_missing_file_for_symbolic_link(self):
+        spam_link = os.path.join(TEST_DIR, 'spam_link')
+        os.symlink(SPAM_FILE, spam_link)
+        os.remove(SPAM_FILE)
+        self.session.reload()
+        self.session.remove_entry('spam_link')
+        self.session.process()
+        self.assertFalse(os.path.exists(spam_link))
+
+    def test_copy_symbolic_link(self):
+        spam_link = os.path.join(TEST_DIR, 'spam_link')
+        os.symlink(SPAM_FILE, spam_link)
+        self.session.reload()
+        digest = self.session.get_digest('spam_link')
+        self.session.add_entry('spam_link2', digest)
+        self.session.process()
+        spam_link2 = os.path.join(TEST_DIR, 'spam_link2')
+        self.assertEqual(os.readlink(spam_link2), SPAM_FILE)
 
     def test_file_save_outside_roamer(self):
         digest = self.session.get_digest('egg.txt')

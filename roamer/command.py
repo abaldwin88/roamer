@@ -33,6 +33,8 @@ class Command(object):
                                  'Trailing slash (/) designates a directory.')
             elif cmd == 'cp':
                 self.options = '-R'
+        elif self.first_entry.is_symlink() and cmd == 'cp':
+            self.options = '-a'
 
 
     def __str__(self):

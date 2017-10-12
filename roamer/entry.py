@@ -40,7 +40,7 @@ class Entry(object):
     def _set_version(self):
         self.version = record.get_version(self.path, self.name)
         if self.version is None and self.persisted():
-            self.version = int(os.path.getmtime(self.path))
+            self.version = int(os.lstat(self.path).st_mtime)
             record.set_version(self.path, self.name, self.version)
 
     def increment_version(self):
@@ -56,8 +56,11 @@ class Entry(object):
     def is_dir(self):
         return self.name[-1] == '/'
 
+    def is_symlink(self):
+        return os.path.islink(self.path)
+
     def persisted(self):
-        return os.path.exists(self.path)
+        return os.path.lexists(self.path)
 
     def base_name(self):
         extension_length = len(self.extension())
