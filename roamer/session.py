@@ -34,6 +34,9 @@ class Session(object):
         output = file_editor(self.directory.text())
         self.process(output)
 
+    def print_raw(self):
+        print(self.directory.text())
+
     def process(self, output):
         self.edit_directory = EditDirectory(self.cwd, output)
         engine = Engine(self.directory, self.edit_directory)
