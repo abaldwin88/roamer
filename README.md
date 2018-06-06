@@ -7,7 +7,7 @@ Roamer turns your favorite text editor into a lightweight file manager.  Copy, C
 
 ## Install
 #### Requirements
-* Python version: 2.7+, 3.2+
+* Python version: 2.7+, 3.4+
 * OS: Linux, MacOS, Windows WSL (Windows Subsystem for Linux)
 
 #### Command
