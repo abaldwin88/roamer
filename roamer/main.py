@@ -15,11 +15,14 @@ def start(argv):
         i = argv.index('--path') + 1
         path = argv[i]
     if '--version' in argv:
-        return print(roamer.__version__)
+        print(roamer.__version__)
+        return
     if '--raw-out' in argv:
-        return Session(cwd=path).print_raw()
+        Session(cwd=path).print_raw()
+        return
     if '--raw-in' in argv:
-        return Session(cwd=path).process(sys.stdin.read())
+        Session(cwd=path).process(sys.stdin.read())
+        return
     if '--skip-approval' in argv:
         skipapproval = True
     Session(cwd=path, skipapproval=skipapproval).run()
