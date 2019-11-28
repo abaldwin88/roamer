@@ -6,6 +6,7 @@ and passes into the Engine for processing
 
 from __future__ import print_function
 import os
+import sys
 from roamer.file_edit import file_editor
 from roamer.directory import Directory
 from roamer.edit_directory import EditDirectory
@@ -55,6 +56,6 @@ class Session(object):
                 answer = None
             if not answer or answer[0].lower() != 'y':
                 print('You did not indicate approval.')
-                exit(1)
+                sys.exit(1)
         engine.run_commands()
         record.add_dir(Directory(self.cwd, os.listdir(self.cwd)))

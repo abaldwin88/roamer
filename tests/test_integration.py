@@ -129,10 +129,10 @@ class TestOperations(unittest.TestCase): #pylint: disable=too-many-public-method
             self.assertEqual(argh_file.read(), '')
 
     def test_comment_line(self):
-        original_entry_count = len([entry for entry in os.listdir(TEST_DIR)])
+        original_entry_count = len(os.listdir(TEST_DIR))
         self.session.add_entry('" Comment Line')
         self.session.process()
-        entry_count = len([entry for entry in os.listdir(TEST_DIR)])
+        entry_count = len(os.listdir(TEST_DIR))
         self.assertEqual(entry_count, original_entry_count)
 
     def test_rename_file_to_directory(self):
