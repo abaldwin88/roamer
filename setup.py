@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup
 import roamer
 setup(
   name = 'roamer',
@@ -11,5 +11,9 @@ setup(
   download_url = 'https://github.com/abaldwin88/roamer/archive/v%s.zip' % roamer.__version__,
   keywords = ['explorer', 'plain text', 'directory'], # arbitrary keywords
   classifiers = [],
-  scripts=['bin/roamer'],
+  install_requires=['click>=7.0'],
+  entry_points='''
+        [console_scripts]
+        roamer=roamer.main:start
+  ''',
 )
